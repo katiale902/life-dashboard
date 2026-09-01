@@ -1,865 +1,524 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Life Dashboard</title>
 
 <style>
-
-* {
-    box-sizing: border-box;
-}
-
-:root {
-    --background: #f7f7fb;
-    --card: #ffffff;
-    --text: #252536;
-    --muted: #77778a;
-    --border: #e8e8f0;
-    --purple: #7657ff;
-    --purple-soft: #eeeaff;
-
-    --finance: #45b97c;
-    --finance-soft: #e8f8ef;
-
-    --business: #7657ff;
-    --business-soft: #eeeaff;
-
-    --home: #f2a65a;
-    --home-soft: #fff2e4;
-
-    --personal: #e978a5;
-    --personal-soft: #fdebf3;
-
-    --travel: #4d9de0;
-    --travel-soft: #e8f3fc;
-
-    --shadow: 0 8px 30px rgba(40,35,70,.07);
-}
-
-body {
-    margin: 0;
-    font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    background: var(--background);
-    color: var(--text);
-}
-
-button,
-input,
-select {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-/* APP */
-
-.app {
-    display: flex;
-    min-height: 100vh;
-}
-
-/* SIDEBAR */
-
-.sidebar {
-    width: 245px;
-    background: #20202d;
-    color: white;
-
-    position: fixed;
-    inset: 0 auto 0 0;
-
-    padding: 28px 18px;
-}
-
-.logo {
-    font-size: 21px;
-    font-weight: 900;
-    margin-bottom: 35px;
-    padding-left: 10px;
-}
-
-.logo span {
-    color: #a995ff;
-}
-
-.nav-button {
-    width: 100%;
-    border: none;
-    background: transparent;
-
-    color: #bdbdcc;
-
-    padding: 12px 14px;
-
-    border-radius: 12px;
-
-    text-align: left;
-
-    margin-bottom: 5px;
-
-    transition: .2s;
-}
-
-.nav-button:hover,
-.nav-button.active {
-    background: #343443;
-    color: white;
-}
-
-.nav-icon {
-    display: inline-block;
-    width: 28px;
-}
-
-/* MAIN */
-
-.main {
-    margin-left: 245px;
-
-    width: calc(100% - 245px);
-
-    padding: 35px;
-
-    max-width: 1500px;
-}
-
-/* HEADER */
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-
-    gap: 25px;
-
-    margin-bottom: 28px;
-}
-
-.eyebrow {
-    color: var(--purple);
-
-    font-size: 13px;
-
-    font-weight: 900;
-
-    text-transform: uppercase;
-
-    letter-spacing: .08em;
-
-    margin-bottom: 6px;
-}
-
-h1 {
-    margin: 0;
-
-    font-size: clamp(28px,4vw,42px);
-
-    letter-spacing: -.04em;
-}
-
-.date {
-    color: var(--muted);
-
-    margin-top: 8px;
-}
-
-/* ENERGY */
-
-.energy-card {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 18px;
-
-    padding: 17px 18px;
-
-    min-width: 310px;
-
-    box-shadow: var(--shadow);
+*{box-sizing:border-box}
+
+:root{
+  --bg:#f6f5fa;
+  --card:#fff;
+  --text:#292735;
+  --muted:#858292;
+  --border:#e8e6ee;
+  --purple:#7657ff;
+  --purple-soft:#eeeaff;
+  --green:#42ad78;
+  --green-soft:#e8f7ef;
+  --blue:#4d9de0;
+  --blue-soft:#e8f3fc;
+  --orange:#eea154;
+  --orange-soft:#fff1e3;
+  --pink:#df709d;
+  --pink-soft:#fcebf3;
+  --shadow:0 8px 28px rgba(45,40,70,.07);
 }
 
-.energy-header {
-    display: flex;
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
 
-    justify-content: space-between;
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
 
-    align-items: center;
+.app{display:flex;min-height:100vh}
 
-    margin-bottom: 12px;
+.sidebar{
+  width:240px;
+  background:#211f2c;
+  color:white;
+  position:fixed;
+  inset:0 auto 0 0;
+  padding:25px 16px;
+  z-index:10
 }
 
-.energy-title {
-    font-weight: 900;
+.logo{
+  font-size:21px;
+  font-weight:900;
+  padding:8px 10px 30px
 }
 
-.energy-number {
-    font-size: 22px;
+.logo span{color:#a995ff}
 
-    font-weight: 900;
-
-    color: var(--purple);
-}
-
-.energy-buttons {
-    display: flex;
-
-    gap: 5px;
+.nav{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#bdb9c9;
+  padding:12px;
+  border-radius:11px;
+  text-align:left;
+  margin-bottom:4px
 }
-
-.energy-button {
-    width: 27px;
-    height: 27px;
-
-    border: none;
-
-    border-radius: 8px;
 
-    background: #ededf3;
+.nav:hover,.nav.active{background:#353240;color:white}
 
-    color: #77778a;
-
-    font-size: 12px;
-
-    font-weight: 900;
-}
-
-.energy-button:hover {
-    background: var(--purple-soft);
+.main{
+  margin-left:240px;
+  width:calc(100% - 240px);
+  max-width:1500px;
+  padding:32px
 }
 
-.energy-button.selected {
-    background: var(--purple);
-
-    color: white;
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:25px;
+  margin-bottom:25px
 }
-
-/* STATS */
-
-.summary {
-    display: grid;
-
-    grid-template-columns: repeat(4,1fr);
 
-    gap: 15px;
-
-    margin-bottom: 25px;
+.eyebrow{
+  color:var(--purple);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:12px;
+  font-weight:900
 }
-
-.stat {
-    background: var(--card);
-
-    border: 1px solid var(--border);
 
-    border-radius: 18px;
-
-    padding: 20px;
-
-    box-shadow: var(--shadow);
+h1{
+  margin:4px 0;
+  font-size:clamp(28px,4vw,42px);
+  letter-spacing:-.04em
 }
 
-.stat-label {
-    color: var(--muted);
+h2{margin:0;font-size:21px}
+h3{margin:0 0 6px}
 
-    font-size: 13px;
+.date,.muted{color:var(--muted)}
 
-    font-weight: 800;
+.energy{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:16px;
+  min-width:310px;
+  box-shadow:var(--shadow)
 }
-
-.stat-value {
-    font-size: 29px;
-
-    font-weight: 900;
 
-    margin-top: 6px;
+.energy-head{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+  font-weight:800
 }
 
-/* RECOMMENDATION */
+.energy-number{color:var(--purple);font-size:21px}
 
-.recommendation {
-    background:
-        linear-gradient(
-            135deg,
-            #eeeaff,
-            #faf8ff
-        );
+.energy-buttons{display:flex;gap:4px}
 
-    border: 1px solid #ddd5ff;
-
-    border-radius: 20px;
-
-    padding: 22px;
-
-    margin-bottom: 30px;
+.energy-btn{
+  width:27px;
+  height:27px;
+  border:0;
+  border-radius:8px;
+  background:#eeeef3;
+  color:#777481;
+  font-size:11px;
+  font-weight:900
 }
-
-.recommendation h2 {
-    margin: 0 0 6px;
 
-    font-size: 18px;
+.energy-btn.selected{
+  background:var(--purple);
+  color:white
 }
 
-.recommendation p {
-    margin: 0;
-
-    color: #68657b;
-
-    line-height: 1.5;
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:22px
 }
-
-/* SECTION */
-
-.section-header {
-    display: flex;
 
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin: 30px 0 15px;
+.stat,.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  box-shadow:var(--shadow)
 }
 
-.section-header h2 {
-    margin: 0;
+.stat{padding:19px}
 
-    font-size: 22px;
+.stat-label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800
 }
-
-.add-button {
-    border: none;
-
-    background: var(--purple);
-
-    color: white;
-
-    padding: 10px 15px;
-
-    border-radius: 11px;
 
-    font-weight: 900;
+.stat-value{
+  font-size:28px;
+  font-weight:900;
+  margin-top:4px
 }
 
-.add-button:hover {
-    opacity: .9;
+.recommendation{
+  background:var(--purple-soft);
+  border:1px solid #ddd5ff;
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:28px
 }
 
-/* LIFE AREAS */
-
-.areas {
-    display: grid;
-
-    grid-template-columns:
-        repeat(5,1fr);
-
-    gap: 12px;
+.recommendation p{
+  color:#68637b;
+  line-height:1.5;
+  margin:5px 0 0
 }
-
-.area {
-    border-radius: 17px;
-
-    padding: 17px;
-
-    min-height: 115px;
-
-    border: 1px solid transparent;
-
-    cursor: pointer;
 
-    transition: .2s;
+.section{
+  margin-bottom:30px
 }
 
-.area:hover {
-    transform: translateY(-2px);
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px
 }
 
-.area-title {
-    font-weight: 900;
-
-    margin-bottom: 10px;
+.primary{
+  border:0;
+  background:var(--purple);
+  color:white;
+  padding:10px 15px;
+  border-radius:10px;
+  font-weight:800
 }
-
-.area-progress {
-    height: 7px;
-
-    background: rgba(255,255,255,.7);
 
-    border-radius: 10px;
+.primary:hover{opacity:.9}
 
-    overflow: hidden;
-
-    margin-bottom: 8px;
+.areas{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px
 }
-
-.area-progress-bar {
-    height: 100%;
-
-    background: rgba(0,0,0,.35);
-
-    border-radius: 10px;
 
-    transition: width .3s;
+.area{
+  padding:17px;
+  border-radius:16px;
+  cursor:pointer;
+  transition:.2s
 }
 
-.area-count {
-    font-size: 12px;
+.area:hover{transform:translateY(-2px)}
 
-    color: rgba(0,0,0,.58);
-}
-
-.finance {
-    background: var(--finance-soft);
-    border-color: #ccebd9;
-}
+.area.finance{background:var(--green-soft)}
+.area.business{background:var(--purple-soft)}
+.area.home{background:var(--orange-soft)}
+.area.personal{background:var(--pink-soft)}
+.area.travel{background:var(--blue-soft)}
 
-.business {
-    background: var(--business-soft);
-    border-color: #ddd5ff;
-}
+.area-name{font-weight:900;margin-bottom:12px}
 
-.home {
-    background: var(--home-soft);
-    border-color: #f8dfc4;
+.bar{
+  height:7px;
+  background:rgba(255,255,255,.8);
+  border-radius:20px;
+  overflow:hidden
 }
 
-.personal {
-    background: var(--personal-soft);
-    border-color: #f4d0df;
+.bar div{
+  height:100%;
+  background:rgba(0,0,0,.32);
+  border-radius:20px;
+  transition:.3s
 }
 
-.travel {
-    background: var(--travel-soft);
-    border-color: #cee5f8;
+.area-info{
+  font-size:11px;
+  color:#66636e;
+  margin-top:8px
 }
-
-/* GOALS */
-
-.goals {
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill,minmax(280px,1fr));
 
-    gap: 15px;
+.goals{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:14px
 }
 
-.goal-card {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 18px;
-
-    padding: 20px;
-
-    box-shadow: var(--shadow);
+.goal{
+  padding:20px
 }
-
-.goal-top {
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 15px;
 
-    margin-bottom: 10px;
+.goal-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px
 }
 
-.goal-name {
-    font-weight: 900;
-
-    font-size: 17px;
+.badge,.tag{
+  display:inline-block;
+  background:#f0eff4;
+  color:#696674;
+  border-radius:20px;
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:900
 }
-
-.goal-area {
-    font-size: 11px;
-
-    font-weight: 900;
-
-    padding: 5px 8px;
 
-    border-radius: 20px;
-
-    white-space: nowrap;
+.goal-description{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+  margin:12px 0 15px
 }
-
-.goal-description {
-    color: var(--muted);
-
-    font-size: 13px;
-
-    line-height: 1.5;
 
-    margin-bottom: 15px;
+.progress{
+  height:8px;
+  background:#ecebf1;
+  border-radius:20px;
+  overflow:hidden
 }
 
-.progress {
-    height: 8px;
-
-    background: #ededf3;
-
-    border-radius: 10px;
-
-    overflow: hidden;
+.progress div{
+  height:100%;
+  background:var(--purple);
+  border-radius:20px
 }
 
-.progress-bar {
-    height: 100%;
-
-    background: var(--purple);
-
-    border-radius: 10px;
-
-    transition: width .3s;
+.goal-foot{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:8px
 }
-
-.goal-footer {
-    display: flex;
 
-    justify-content: space-between;
-
-    margin-top: 8px;
-
-    color: var(--muted);
-
-    font-size: 12px;
+.tasks{
+  overflow:hidden
 }
-
-/* TODAY */
-
-.task-list {
-    background: var(--card);
-
-    border: 1px solid var(--border);
-
-    border-radius: 20px;
-
-    overflow: hidden;
 
-    box-shadow: var(--shadow);
+.task{
+  display:grid;
+  grid-template-columns:28px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:16px 18px;
+  border-bottom:1px solid var(--border)
 }
 
-.task {
-    display: grid;
+.task:last-child{border-bottom:0}
 
-    grid-template-columns:
-        28px 1fr auto;
-
-    gap: 12px;
-
-    align-items: center;
-
-    padding: 17px 20px;
-
-    border-bottom:
-        1px solid var(--border);
-}
-
-.task:last-child {
-    border-bottom: none;
+.check{
+  width:21px;
+  height:21px;
+  border:2px solid #c9c7d1;
+  border-radius:7px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:center
 }
-
-.checkbox {
-    width: 21px;
-    height: 21px;
 
-    border: 2px solid #c9c9d5;
-
-    border-radius: 7px;
-
-    background: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    cursor: pointer;
+.check.done{
+  background:var(--green);
+  border-color:var(--green);
+  color:white
 }
 
-.checkbox.checked {
-    background: var(--finance);
+.check.done:after{content:"✓";font-weight:900;font-size:12px}
 
-    border-color: var(--finance);
-
-    color: white;
+.task.done .task-name{
+  text-decoration:line-through;
+  color:#aaa7b2
 }
-
-.checkbox.checked::after {
-    content: "✓";
 
-    font-size: 13px;
+.task-name{font-weight:800}
 
-    font-weight: 900;
+.meta{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:5px
 }
 
-.task-name {
-    font-weight: 800;
+.fit{
+  color:var(--purple);
+  font-size:10px;
+  font-weight:900
 }
 
-.task.completed .task-name {
-    text-decoration: line-through;
-
-    color: #9999a8;
-}
-
-.task-meta {
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    margin-top: 5px;
-
-    flex-wrap: wrap;
+.timer{
+  border:1px solid var(--border);
+  background:white;
+  padding:6px 9px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight:800
 }
 
-.tag {
-    font-size: 11px;
-
-    font-weight: 800;
-
-    padding: 4px 8px;
-
-    border-radius: 20px;
-
-    background: #f0f0f5;
-
-    color: #666677;
+.empty{
+  text-align:center;
+  padding:40px;
+  color:var(--muted)
 }
 
-.task-time {
-    color: var(--muted);
-
-    font-size: 12px;
+.history-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px
 }
-
-.fit {
-    font-size: 11px;
 
-    font-weight: 900;
-
-    color: var(--purple);
+.day{
+  aspect-ratio:1;
+  border-radius:7px;
+  background:#eeeef2;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  color:#777481
 }
-
-/* EMPTY */
-
-.empty {
-    padding: 45px;
 
-    text-align: center;
+.day.active{background:var(--purple-soft)}
+.day.good{background:var(--green-soft)}
 
-    color: var(--muted);
-
-    line-height: 1.6;
+.insights{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px
 }
-
-/* MODAL */
-
-.modal {
-    position: fixed;
-
-    inset: 0;
 
-    background:
-        rgba(20,20,35,.45);
+.insight{padding:20px}
 
-    display: none;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 20px;
-
-    z-index: 50;
+.insight-number{
+  font-size:27px;
+  font-weight:900;
+  margin:8px 0
 }
-
-.modal.open {
-    display: flex;
-}
-
-.modal-card {
-    background: white;
-
-    width: 100%;
 
-    max-width: 520px;
-
-    border-radius: 22px;
-
-    padding: 25px;
-
-    box-shadow:
-        0 25px 80px
-        rgba(20,20,35,.25);
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(25,22,35,.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:100
 }
 
-.modal-card h2 {
-    margin-top: 0;
-}
+.modal.open{display:flex}
 
-.form-group {
-    margin-bottom: 15px;
+.modal-box{
+  background:white;
+  width:100%;
+  max-width:520px;
+  border-radius:20px;
+  padding:24px;
+  max-height:90vh;
+  overflow:auto
 }
-
-.form-group label {
-    display: block;
 
-    font-size: 13px;
+.form-group{margin-bottom:15px}
 
-    font-weight: 900;
-
-    margin-bottom: 7px;
+label{
+  display:block;
+  font-size:12px;
+  font-weight:900;
+  margin-bottom:6px
 }
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;
 
-    padding: 12px;
-
-    border:
-        1px solid var(--border);
-
-    border-radius: 10px;
-
-    outline: none;
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px;
+  outline:none
 }
-
-.form-group textarea {
-    min-height: 80px;
 
-    resize: vertical;
-}
+textarea{min-height:75px;resize:vertical}
 
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    border-color: var(--purple);
+input:focus,select:focus,textarea:focus{
+  border-color:var(--purple)
 }
-
-.modal-actions {
-    display: flex;
-
-    justify-content: flex-end;
-
-    gap: 10px;
 
-    margin-top: 20px;
+.modal-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:20px
 }
 
-.cancel {
-    border: 1px solid var(--border);
-
-    background: white;
-
-    padding: 10px 15px;
-
-    border-radius: 10px;
+.secondary{
+  border:1px solid var(--border);
+  background:white;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700
 }
 
-/* MOBILE */
+.page{display:none}
+.page.active{display:block}
 
-@media(max-width:1050px) {
-
-    .areas {
-        grid-template-columns:
-            repeat(3,1fr);
-    }
-
-    .summary {
-        grid-template-columns:
-            repeat(2,1fr);
-    }
+@media(max-width:1100px){
+  .areas{grid-template-columns:repeat(3,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .insights{grid-template-columns:1fr 1fr}
 }
-
-@media(max-width:750px) {
-
-    .sidebar {
-        position: static;
 
-        width: 100%;
+@media(max-width:750px){
+  .sidebar{
+    position:static;
+    width:100%;
+    padding:12px
+  }
 
-        padding: 15px;
-    }
+  .app{display:block}
 
-    .app {
-        display: block;
-    }
+  .logo{padding:5px 8px 10px}
 
-    .logo {
-        margin-bottom: 10px;
-    }
+  .nav{
+    width:auto;
+    display:inline-block;
+    padding:9px
+  }
 
-    .nav-button {
-        width: auto;
+  .main{
+    margin:0;
+    width:100%;
+    padding:20px
+  }
 
-        display: inline-block;
-    }
+  .top{display:block}
 
-    .main {
-        margin-left: 0;
+  .energy{
+    margin-top:18px;
+    min-width:0
+  }
 
-        width: 100%;
+  .areas{grid-template-columns:1fr 1fr}
 
-        padding: 20px;
-    }
+  .task{
+    grid-template-columns:28px 1fr
+  }
 
-    .topbar {
-        display: block;
-    }
-
-    .energy-card {
-        margin-top: 18px;
-
-        min-width: 0;
-    }
-
-    .areas {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    .task {
-        grid-template-columns:
-            28px 1fr;
-    }
-
-    .task > .fit {
-        grid-column: 2;
-    }
+  .timer,.fit{
+    grid-column:2
+  }
 }
-
-@media(max-width:480px) {
 
-    .summary {
-        grid-template-columns:
-            1fr 1fr;
-    }
-
-    .areas {
-        grid-template-columns:
-            1fr;
-    }
+@media(max-width:480px){
+  .stats{grid-template-columns:1fr 1fr}
+  .areas{grid-template-columns:1fr}
+  .insights{grid-template-columns:1fr}
 }
-
 </style>
 </head>
 
@@ -867,1795 +526,1803 @@ h1 {
 
 <div class="app">
 
-<!-- SIDEBAR -->
-
 <aside class="sidebar">
 
-    <div class="logo">
-        Life<span>Dashboard</span>
-    </div>
+  <div class="logo">Life<span>Dashboard</span></div>
 
-    <button class="nav-button active">
-        <span class="nav-icon">🏠</span>
-        Today
-    </button>
-
-    <button class="nav-button">
-        <span class="nav-icon">🎯</span>
-        Goals
-    </button>
-
-    <button class="nav-button">
-        <span class="nav-icon">📁</span>
-        Projects
-    </button>
-
-    <button class="nav-button">
-        <span class="nav-icon">📅</span>
-        History
-    </button>
-
-    <button class="nav-button">
-        <span class="nav-icon">📊</span>
-        Insights
-    </button>
+  <button class="nav active" onclick="showPage('today',this)">🏠 Today</button>
+  <button class="nav" onclick="showPage('goals',this)">🎯 Goals</button>
+  <button class="nav" onclick="showPage('projects',this)">📁 Projects</button>
+  <button class="nav" onclick="showPage('history',this)">📅 History</button>
+  <button class="nav" onclick="showPage('insights',this)">🧠 Insights</button>
 
 </aside>
 
-
-<!-- MAIN -->
-
 <main class="main">
-
-<!-- HEADER -->
-
-<div class="topbar">
-
-    <div>
-
-        <div class="eyebrow">
-            Your life, one step at a time
-        </div>
-
-        <h1>
-            Good morning, Katia 👋
-        </h1>
-
-        <div
-            class="date"
-            id="todayDate">
-        </div>
-
-    </div>
-
-
-    <!-- ENERGY -->
-
-    <div class="energy-card">
-
-        <div class="energy-header">
-
-            <div class="energy-title">
-                ⚡ Today's energy
-            </div>
-
-            <div class="energy-number">
-                <span id="energyValue">5</span>/10
-            </div>
-
-        </div>
-
-        <div
-            class="energy-buttons"
-            id="energyButtons">
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- SUMMARY -->
-
-<div class="summary">
-
-    <div class="stat">
-
-        <div class="stat-label">
-            Active goals
-        </div>
-
-        <div
-            class="stat-value"
-            id="goalCount">
-            0
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-label">
-            Today's tasks
-        </div>
-
-        <div
-            class="stat-value"
-            id="taskCount">
-            0
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-label">
-            Completed
-        </div>
-
-        <div
-            class="stat-value"
-            id="completedCount">
-            0
-        </div>
-
-    </div>
-
-
-    <div class="stat">
-
-        <div class="stat-label">
-            Progress today
-        </div>
-
-        <div
-            class="stat-value"
-            id="dailyProgress">
-            0%
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- RECOMMENDATION -->
-
-<div class="recommendation">
-
-    <h2>
-        🧠 Today's recommendation
-    </h2>
-
-    <p id="recommendationText">
-        Choose your energy level and I'll help you decide what deserves your attention today.
-    </p>
-
-</div>
-
-
-<!-- LIFE AREAS -->
-
-<div class="section-header">
-
-    <h2>
-        Your life areas
-    </h2>
-
-    <button
-        class="add-button"
-        onclick="openGoalModal()">
-
-        ＋ Add goal
-
-    </button>
-
-</div>
-
-
-<div class="areas">
-
-    <div class="area finance">
-
-        <div class="area-title">
-            💰 Finance
-        </div>
-
-        <div class="area-progress">
-            <div
-                class="area-progress-bar"
-                id="financeProgress"
-                style="width:0%">
-            </div>
-        </div>
-
-        <div
-            class="area-count"
-            id="financeCount">
-            0 goals
-        </div>
-
-    </div>
-
-
-    <div class="area business">
-
-        <div class="area-title">
-            💼 Business
-        </div>
-
-        <div class="area-progress">
-            <div
-                class="area-progress-bar"
-                id="businessProgress"
-                style="width:0%">
-            </div>
-        </div>
-
-        <div
-            class="area-count"
-            id="businessCount">
-            0 goals
-        </div>
-
-    </div>
-
-
-    <div class="area home">
-
-        <div class="area-title">
-            🏠 Home
-        </div>
-
-        <div class="area-progress">
-            <div
-                class="area-progress-bar"
-                id="homeProgress"
-                style="width:0%">
-            </div>
-        </div>
-
-        <div
-            class="area-count"
-            id="homeCount">
-            0 goals
-        </div>
-
-    </div>
-
-
-    <div class="area personal">
-
-        <div class="area-title">
-            🌱 Personal
-        </div>
-
-        <div class="area-progress">
-            <div
-                class="area-progress-bar"
-                id="personalProgress"
-                style="width:0%">
-            </div>
-        </div>
-
-        <div
-            class="area-count"
-            id="personalCount">
-            0 goals
-        </div>
-
-    </div>
-
-
-    <div class="area travel">
-
-        <div class="area-title">
-            ✈️ Travel
-        </div>
-
-        <div class="area-progress">
-            <div
-                class="area-progress-bar"
-                id="travelProgress"
-                style="width:0%">
-            </div>
-        </div>
-
-        <div
-            class="area-count"
-            id="travelCount">
-            0 goals
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- GOALS -->
-
-<div class="section-header">
-
-    <h2>
-        Your goals
-    </h2>
-
-</div>
-
-
-<div
-    class="goals"
-    id="goalList">
-</div>
-
 
 <!-- TODAY -->
 
-<div class="section-header">
+<div id="today" class="page active">
 
-    <h2>
-        Today's best next actions
-    </h2>
+  <div class="top">
 
-    <button
-        class="add-button"
-        onclick="openTaskModal()">
+    <div>
+      <div class="eyebrow">Your life, one step at a time</div>
+      <h1>Good morning, Katia 👋</h1>
+      <div class="date" id="date"></div>
+    </div>
 
-        ＋ Add task
+    <div class="energy">
 
-    </button>
+      <div class="energy-head">
+        <span>⚡ Today's energy</span>
+        <span class="energy-number">
+          <span id="energy">5</span>/10
+        </span>
+      </div>
+
+      <div class="energy-buttons" id="energyButtons"></div>
+
+    </div>
+
+  </div>
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="stat-label">ACTIVE GOALS</div>
+      <div class="stat-value" id="goalStat">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">TODAY'S ACTIONS</div>
+      <div class="stat-value" id="taskStat">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">COMPLETED</div>
+      <div class="stat-value" id="completeStat">0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">TODAY'S PROGRESS</div>
+      <div class="stat-value" id="progressStat">0%</div>
+    </div>
+
+  </div>
+
+  <div class="recommendation">
+    <strong>🧠 Today's recommendation</strong>
+    <p id="recommendation"></p>
+  </div>
+
+  <div class="section">
+
+    <div class="section-head">
+      <h2>Your life areas</h2>
+      <button class="primary" onclick="openGoal()">＋ Add goal</button>
+    </div>
+
+    <div class="areas">
+
+      <div class="area finance">
+        <div class="area-name">💰 Finance</div>
+        <div class="bar"><div id="financeBar"></div></div>
+        <div class="area-info" id="financeInfo"></div>
+      </div>
+
+      <div class="area business">
+        <div class="area-name">💼 Business</div>
+        <div class="bar"><div id="businessBar"></div></div>
+        <div class="area-info" id="businessInfo"></div>
+      </div>
+
+      <div class="area home">
+        <div class="area-name">🏠 Home</div>
+        <div class="bar"><div id="homeBar"></div></div>
+        <div class="area-info" id="homeInfo"></div>
+      </div>
+
+      <div class="area personal">
+        <div class="area-name">🌱 Personal</div>
+        <div class="bar"><div id="personalBar"></div></div>
+        <div class="area-info" id="personalInfo"></div>
+      </div>
+
+      <div class="area travel">
+        <div class="area-name">✈️ Travel</div>
+        <div class="bar"><div id="travelBar"></div></div>
+        <div class="area-info" id="travelInfo"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="section">
+
+    <div class="section-head">
+      <h2>Your goals</h2>
+    </div>
+
+    <div class="goals" id="goalList"></div>
+
+  </div>
+
+  <div class="section">
+
+    <div class="section-head">
+      <h2>Today's best next actions</h2>
+      <button class="primary" onclick="openTask()">＋ Add action</button>
+    </div>
+
+    <div class="card tasks" id="taskList"></div>
+
+  </div>
 
 </div>
 
 
-<div
-    class="task-list"
-    id="taskList">
+<!-- GOALS PAGE -->
+
+<div id="goals" class="page">
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Big picture</div>
+      <h1>Goals</h1>
+    </div>
+    <button class="primary" onclick="openGoal()">＋ Add goal</button>
+  </div>
+
+  <div class="goals" id="allGoals"></div>
+
 </div>
 
+
+<!-- PROJECTS PAGE -->
+
+<div id="projects" class="page">
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Break goals into pieces</div>
+      <h1>Projects</h1>
+    </div>
+    <button class="primary" onclick="openProject()">＋ Add project</button>
+  </div>
+
+  <div class="goals" id="projectList"></div>
+
+</div>
+
+
+<!-- HISTORY -->
+
+<div id="history" class="page">
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Look back</div>
+      <h1>History</h1>
+    </div>
+  </div>
+
+  <div class="card goal" style="margin-bottom:18px">
+
+    <h3>Activity calendar</h3>
+
+    <p class="muted">
+      Your activity grows here as you complete actions.
+    </p>
+
+    <div class="history-grid" id="historyGrid"></div>
+
+  </div>
+
+  <div class="insights">
+
+    <div class="card insight">
+      <div class="muted">TOTAL ACTIONS</div>
+      <div class="insight-number" id="historyTasks">0</div>
+      <div class="muted">created</div>
+    </div>
+
+    <div class="card insight">
+      <div class="muted">COMPLETED</div>
+      <div class="insight-number" id="historyCompleted">0</div>
+      <div class="muted">actions</div>
+    </div>
+
+    <div class="card insight">
+      <div class="muted">TIME INVESTED</div>
+      <div class="insight-number" id="historyTime">0m</div>
+      <div class="muted">estimated time</div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- INSIGHTS -->
+
+<div id="insights" class="page">
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Patterns, not judgment</div>
+      <h1>Insights</h1>
+    </div>
+  </div>
+
+  <div class="insights">
+
+    <div class="card insight">
+      <div class="muted">BEST ENERGY</div>
+      <div class="insight-number" id="bestEnergy">—</div>
+      <div class="muted">based on completed actions</div>
+    </div>
+
+    <div class="card insight">
+      <div class="muted">COMPLETION RATE</div>
+      <div class="insight-number" id="completionRate">0%</div>
+      <div class="muted">all actions</div>
+    </div>
+
+    <div class="card insight">
+      <div class="muted">AVERAGE TASK</div>
+      <div class="insight-number" id="averageTask">0m</div>
+      <div class="muted">estimated duration</div>
+    </div>
+
+  </div>
+
+  <div class="recommendation" style="margin-top:18px">
+
+    <strong>🔮 Early prediction</strong>
+
+    <p id="prediction"></p>
+
+  </div>
+
+</div>
 
 </main>
-
 </div>
 
 
 <!-- GOAL MODAL -->
 
-<div
-    class="modal"
-    id="goalModal">
+<div class="modal" id="goalModal">
 
-    <div class="modal-card">
+  <div class="modal-box">
 
-        <h2>
-            Create a goal
-        </h2>
+    <h2>Create a goal</h2>
 
-        <div class="form-group">
+    <p class="muted">
+      What would make your life meaningfully better?
+    </p>
 
-            <label>
-                What do you want to achieve?
-            </label>
+    <div class="form-group">
+      <label>GOAL</label>
+      <input id="goalName" placeholder="Become debt free">
+    </div>
 
-            <input
-                id="goalName"
-                placeholder="e.g. Become debt free">
+    <div class="form-group">
+      <label>LIFE AREA</label>
 
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Life area
-            </label>
-
-            <select id="goalArea">
-
-                <option value="finance">
-                    💰 Finance
-                </option>
-
-                <option value="business">
-                    💼 Business
-                </option>
-
-                <option value="home">
-                    🏠 Home
-                </option>
-
-                <option value="personal">
-                    🌱 Personal
-                </option>
-
-                <option value="travel">
-                    ✈️ Travel
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Why does this matter?
-            </label>
-
-            <textarea
-                id="goalDescription"
-                placeholder="A short description...">
-            </textarea>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                class="cancel"
-                onclick="closeGoalModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                class="add-button"
-                onclick="addGoal()">
-
-                Create goal
-
-            </button>
-
-        </div>
+      <select id="goalArea">
+        <option value="finance">💰 Finance</option>
+        <option value="business">💼 Business</option>
+        <option value="home">🏠 Home</option>
+        <option value="personal">🌱 Personal</option>
+        <option value="travel">✈️ Travel</option>
+      </select>
 
     </div>
+
+    <div class="form-group">
+      <label>WHY DOES THIS MATTER?</label>
+      <textarea id="goalDescription" placeholder="Describe what success looks like..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModals()">Cancel</button>
+      <button class="primary" onclick="addGoal()">Create goal</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- PROJECT MODAL -->
+
+<div class="modal" id="projectModal">
+
+  <div class="modal-box">
+
+    <h2>Create a project</h2>
+
+    <p class="muted">
+      A project is a collection of actions that moves a goal forward.
+    </p>
+
+    <div class="form-group">
+      <label>PROJECT</label>
+      <input id="projectName" placeholder="Credit card payoff">
+    </div>
+
+    <div class="form-group">
+      <label>GOAL</label>
+      <select id="projectGoal"></select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModals()">Cancel</button>
+      <button class="primary" onclick="addProject()">Create project</button>
+    </div>
+
+  </div>
 
 </div>
 
 
 <!-- TASK MODAL -->
 
-<div
-    class="modal"
-    id="taskModal">
+<div class="modal" id="taskModal">
 
-    <div class="modal-card">
+  <div class="modal-box">
 
-        <h2>
-            Add a daily action
-        </h2>
+    <h2>Add a daily action</h2>
 
+    <p class="muted">
+      Keep it concrete. If it takes several steps, make it a project.
+    </p>
 
-        <div class="form-group">
+    <div class="form-group">
+      <label>ACTION</label>
+      <input id="taskName" placeholder="Review my credit card balance">
+    </div>
 
-            <label>
-                What needs to happen?
-            </label>
+    <div class="form-group">
+      <label>GOAL</label>
+      <select id="taskGoal"></select>
+    </div>
 
-            <input
-                id="taskName"
-                placeholder="e.g. Review credit card balance">
+    <div class="form-group">
+      <label>ESTIMATED TIME</label>
 
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Goal
-            </label>
-
-            <select id="taskGoal">
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Estimated time
-            </label>
-
-            <select id="taskDuration">
-
-                <option value="5">
-                    5 minutes
-                </option>
-
-                <option value="10">
-                    10 minutes
-                </option>
-
-                <option value="15">
-                    15 minutes
-                </option>
-
-                <option value="20">
-                    20 minutes
-                </option>
-
-                <option value="30">
-                    30 minutes
-                </option>
-
-                <option value="45">
-                    45 minutes
-                </option>
-
-                <option value="60">
-                    1 hour
-                </option>
-
-                <option value="90">
-                    1.5 hours
-                </option>
-
-                <option value="120">
-                    2 hours
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Difficulty
-            </label>
-
-            <select id="taskDifficulty">
-
-                <option value="1">
-                    🟢 Easy
-                </option>
-
-                <option value="2">
-                    🟡 Medium
-                </option>
-
-                <option value="3">
-                    🔴 Hard
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button
-                class="cancel"
-                onclick="closeTaskModal()">
-
-                Cancel
-
-            </button>
-
-            <button
-                class="add-button"
-                onclick="addTask()">
-
-                Add action
-
-            </button>
-
-        </div>
+      <select id="taskDuration">
+        <option value="5">5 minutes</option>
+        <option value="10">10 minutes</option>
+        <option value="15">15 minutes</option>
+        <option value="20">20 minutes</option>
+        <option value="30">30 minutes</option>
+        <option value="45">45 minutes</option>
+        <option value="60">1 hour</option>
+        <option value="90">1.5 hours</option>
+        <option value="120">2 hours</option>
+      </select>
 
     </div>
+
+    <div class="form-group">
+      <label>ENERGY REQUIRED</label>
+
+      <select id="taskDifficulty">
+        <option value="1">🟢 Low</option>
+        <option value="2">🟡 Medium</option>
+        <option value="3">🔴 High</option>
+      </select>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary" onclick="closeModals()">Cancel</button>
+      <button class="primary" onclick="addTask()">Add action</button>
+    </div>
+
+  </div>
 
 </div>
 
 
 <script>
 
-/* =========================================
-   DATA
-========================================= */
+/* ================================
+   STORAGE
+================================ */
 
-const GOAL_STORAGE =
-    "lifeDashboardGoals";
-
-const TASK_STORAGE =
-    "lifeDashboardTasks";
-
-const ENERGY_STORAGE =
-    "lifeDashboardEnergy";
+const GOALS_KEY = "lifeDashboardGoalsV3";
+const TASKS_KEY = "lifeDashboardTasksV3";
+const PROJECTS_KEY = "lifeDashboardProjectsV3";
+const HISTORY_KEY = "lifeDashboardHistoryV3";
+const ENERGY_KEY = "lifeDashboardEnergyV3";
 
 
-let goals =
-    JSON.parse(
-        localStorage.getItem(GOAL_STORAGE)
-    ) || [
+let goals = JSON.parse(localStorage.getItem(GOALS_KEY)) || [
 
-        {
-            id: 1,
+  {
+    id:1,
+    name:"Become financially stronger",
+    area:"finance",
+    description:"Build more control, clarity and confidence around money.",
+    progress:15
+  },
 
-            name:
-                "Become financially stronger",
+  {
+    id:2,
+    name:"Grow my business",
+    area:"business",
+    description:"Turn ideas into consistent business progress.",
+    progress:10
+  },
 
-            area:
-                "finance",
+  {
+    id:3,
+    name:"Create a peaceful home",
+    area:"home",
+    description:"Make home easier, calmer and more enjoyable.",
+    progress:20
+  },
 
-            description:
-                "Build control and confidence around money.",
+  {
+    id:4,
+    name:"Plan my next adventure",
+    area:"travel",
+    description:"Turn a future trip into a real plan.",
+    progress:5
+  }
 
-            progress: 25
-        },
-
-        {
-            id: 2,
-
-            name:
-                "Grow my business",
-
-            area:
-                "business",
-
-            description:
-                "Move the business forward through consistent action.",
-
-            progress: 10
-        },
-
-        {
-            id: 3,
-
-            name:
-                "Create a peaceful home",
-
-            area:
-                "home",
-
-            description:
-                "Make my environment easier and calmer to live in.",
-
-            progress: 20
-        },
-
-        {
-            id: 4,
-
-            name:
-                "Plan my next adventure",
-
-            area:
-                "travel",
-
-            description:
-                "Turn a future trip into a real plan.",
-
-            progress: 5
-        }
-    ];
+];
 
 
-let tasks =
-    JSON.parse(
-        localStorage.getItem(TASK_STORAGE)
-    ) || [
+let projects = JSON.parse(localStorage.getItem(PROJECTS_KEY)) || [
 
-        {
-            id: 1,
+  {
+    id:1,
+    name:"Financial reset",
+    goalId:1
+  },
 
-            name:
-                "Review this week's spending",
+  {
+    id:2,
+    name:"Business foundation",
+    goalId:2
+  }
 
-            goalId:
-                1,
+];
 
-            duration:
-                20,
 
-            difficulty:
-                1,
+let tasks = JSON.parse(localStorage.getItem(TASKS_KEY)) || [
 
-            completed:
-                false
-        },
+  {
+    id:1,
+    name:"Review this week's spending",
+    goalId:1,
+    duration:20,
+    difficulty:1,
+    completed:false,
+    date:todayKey(),
+    elapsed:0
+  },
 
-        {
-            id: 2,
+  {
+    id:2,
+    name:"Work on one important business task",
+    goalId:2,
+    duration:45,
+    difficulty:3,
+    completed:false,
+    date:todayKey(),
+    elapsed:0
+  },
 
-            name:
-                "Work on one important business task",
+  {
+    id:3,
+    name:"Clear one small area of the kitchen",
+    goalId:3,
+    duration:15,
+    difficulty:1,
+    completed:false,
+    date:todayKey(),
+    elapsed:0
+  },
 
-            goalId:
-                2,
+  {
+    id:4,
+    name:"Research one possible destination",
+    goalId:4,
+    duration:15,
+    difficulty:1,
+    completed:false,
+    date:todayKey(),
+    elapsed:0
+  }
 
-            duration:
-                45,
+];
 
-            difficulty:
-                3,
 
-            completed:
-                false
-        },
-
-        {
-            id: 3,
-
-            name:
-                "Clear one small area of the kitchen",
-
-            goalId:
-                3,
-
-            duration:
-                15,
-
-            difficulty:
-                1,
-
-            completed:
-                false
-        },
-
-        {
-            id: 4,
-
-            name:
-                "Research one possible destination",
-
-            goalId:
-                4,
-
-            duration:
-                15,
-
-            difficulty:
-                1,
-
-            completed:
-                false
-        }
-    ];
-
+let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || {};
 
 let energy =
-    Number(
-        localStorage.getItem(
-            ENERGY_STORAGE
-        )
-    ) || 5;
+  Number(localStorage.getItem(ENERGY_KEY)) || 5;
 
 
-/* =========================================
-   CONSTANTS
-========================================= */
+/* ================================
+   HELPERS
+================================ */
 
-const areaNames = {
+function todayKey(){
 
-    finance:
-        "💰 Finance",
+  return new Date()
+    .toISOString()
+    .slice(0,10);
 
-    business:
-        "💼 Business",
-
-    home:
-        "🏠 Home",
-
-    personal:
-        "🌱 Personal",
-
-    travel:
-        "✈️ Travel"
-};
-
-
-/* =========================================
-   SAVE
-========================================= */
-
-function save() {
-
-    localStorage.setItem(
-        GOAL_STORAGE,
-        JSON.stringify(goals)
-    );
-
-    localStorage.setItem(
-        TASK_STORAGE,
-        JSON.stringify(tasks)
-    );
-
-    localStorage.setItem(
-        ENERGY_STORAGE,
-        energy
-    );
 }
 
 
-/* =========================================
+function save(){
+
+  localStorage.setItem(
+    GOALS_KEY,
+    JSON.stringify(goals)
+  );
+
+  localStorage.setItem(
+    PROJECTS_KEY,
+    JSON.stringify(projects)
+  );
+
+  localStorage.setItem(
+    TASKS_KEY,
+    JSON.stringify(tasks)
+  );
+
+  localStorage.setItem(
+    HISTORY_KEY,
+    JSON.stringify(history)
+  );
+
+  localStorage.setItem(
+    ENERGY_KEY,
+    energy
+  );
+
+}
+
+
+function escapeHTML(value){
+
+  const div =
+    document.createElement("div");
+
+  div.textContent = value;
+
+  return div.innerHTML;
+
+}
+
+
+function areaName(area){
+
+  const names = {
+
+    finance:"💰 Finance",
+    business:"💼 Business",
+    home:"🏠 Home",
+    personal:"🌱 Personal",
+    travel:"✈️ Travel"
+
+  };
+
+  return names[area] || area;
+
+}
+
+
+/* ================================
    DATE
-========================================= */
-
-function renderDate() {
-
-    const date =
-        new Date();
-
-    document.getElementById(
-        "todayDate"
-    ).textContent =
-        date.toLocaleDateString(
-            "en-US",
-            {
-                weekday:
-                    "long",
-
-                month:
-                    "long",
-
-                day:
-                    "numeric",
-
-                year:
-                    "numeric"
-            }
-        );
-}
-
-
-/* =========================================
-   ENERGY
-========================================= */
-
-function renderEnergy() {
-
-    const container =
-        document.getElementById(
-            "energyButtons"
-        );
-
-    container.innerHTML = "";
-
-    for (
-        let i = 1;
-        i <= 10;
-        i++
-    ) {
-
-        const button =
-            document.createElement(
-                "button"
-            );
-
-        button.className =
-            "energy-button" +
-            (
-                i === energy
-                    ? " selected"
-                    : ""
-            );
-
-        button.textContent =
-            i;
-
-        button.onclick =
-            function() {
-
-                energy = i;
-
-                save();
-
-                render();
-            };
-
-        container.appendChild(
-            button
-        );
-    }
-
-    document.getElementById(
-        "energyValue"
-    ).textContent =
-        energy;
-}
-
-
-/* =========================================
-   GOALS
-========================================= */
-
-function renderGoals() {
-
-    const container =
-        document.getElementById(
-            "goalList"
-        );
-
-    if (!goals.length) {
-
-        container.innerHTML =
-            `
-            <div class="empty">
-                You haven't created any goals yet.
-                <br>
-                Start with one thing that matters.
-            </div>
-            `;
-
-        return;
-    }
-
-    container.innerHTML =
-        goals.map(
-            goal => {
-
-                const area =
-                    goal.area;
-
-                const goalTasks =
-                    tasks.filter(
-                        task =>
-                            task.goalId ===
-                            goal.id
-                    );
-
-                const completed =
-                    goalTasks.filter(
-                        task =>
-                            task.completed
-                    ).length;
-
-                let progress =
-                    goal.progress || 0;
-
-                if (
-                    goalTasks.length
-                ) {
-
-                    progress =
-                        Math.max(
-                            progress,
-
-                            Math.round(
-                                (
-                                    completed /
-                                    goalTasks.length
-                                ) * 100
-                            )
-                        );
-                }
-
-                return `
-                    <div class="goal-card">
-
-                        <div class="goal-top">
-
-                            <div class="goal-name">
-                                ${escapeHtml(
-                                    goal.name
-                                )}
-                            </div>
-
-                            <div
-                                class="goal-area ${area}"
-                            >
-                                ${areaNames[area]}
-                            </div>
-
-                        </div>
-
-                        <div class="goal-description">
-
-                            ${escapeHtml(
-                                goal.description ||
-                                "A goal worth moving toward."
-                            )}
-
-                        </div>
-
-                        <div class="progress">
-
-                            <div
-                                class="progress-bar"
-                                style="width:${progress}%"
-                            ></div>
-
-                        </div>
-
-                        <div class="goal-footer">
-
-                            <span>
-                                ${progress}% progress
-                            </span>
-
-                            <span>
-                                ${completed}/${goalTasks.length}
-                                tasks
-                            </span>
-
-                        </div>
-
-                    </div>
-                `;
-            }
-        ).join("");
-}
-
-
-/* =========================================
-   TODAY'S TASKS
-========================================= */
-
-function renderTasks() {
-
-    const container =
-        document.getElementById(
-            "taskList"
-        );
-
-    if (!tasks.length) {
-
-        container.innerHTML =
-            `
-            <div class="empty">
-                No actions yet.
-                <br>
-                Add one tiny step toward something that matters.
-            </div>
-            `;
-
-        return;
-    }
-
-
-    const incomplete =
-        tasks.filter(
-            task =>
-                !task.completed
-        );
-
-
-    const completed =
-        tasks.filter(
-            task =>
-                task.completed
-        );
-
-
-    /*
-        The recommendation system
-        currently prioritizes:
-
-        1. unfinished tasks
-        2. tasks that fit today's energy
-        3. easier tasks
-        4. shorter tasks
-    */
-
-    incomplete.sort(
-        (a,b) => {
-
-            const aFit =
-                a.difficulty <=
-                Math.ceil(
-                    energy / 3
-                );
-
-            const bFit =
-                b.difficulty <=
-                Math.ceil(
-                    energy / 3
-                );
-
-            if (
-                aFit !== bFit
-            ) {
-
-                return bFit - aFit;
-            }
-
-            if (
-                a.difficulty !==
-                b.difficulty
-            ) {
-
-                return (
-                    a.difficulty -
-                    b.difficulty
-                );
-            }
-
-            return (
-                a.duration -
-                b.duration
-            );
-        }
+================================ */
+
+function renderDate(){
+
+  document.getElementById("date").textContent =
+    new Date().toLocaleDateString(
+      "en-US",
+      {
+        weekday:"long",
+        month:"long",
+        day:"numeric",
+        year:"numeric"
+      }
     );
 
-
-    const sorted =
-        [
-            ...incomplete,
-            ...completed
-        ];
-
-
-    container.innerHTML =
-        sorted.map(
-            task => {
-
-                const goal =
-                    goals.find(
-                        g =>
-                            g.id ===
-                            task.goalId
-                    );
-
-
-                const fitsEnergy =
-                    task.difficulty <=
-                    Math.ceil(
-                        energy / 3
-                    );
-
-
-                return `
-                    <div
-                        class="task
-                        ${task.completed
-                            ? "completed"
-                            : ""
-                        }"
-                    >
-
-                        <div
-                            class="checkbox
-                            ${task.completed
-                                ? "checked"
-                                : ""
-                            }"
-                            onclick="
-                                toggleTask(
-                                    ${task.id}
-                                )
-                            "
-                        ></div>
-
-
-                        <div>
-
-                            <div class="task-name">
-
-                                ${escapeHtml(
-                                    task.name
-                                )}
-
-                            </div>
-
-
-                            <div class="task-meta">
-
-                                <span class="tag">
-
-                                    ${
-                                        goal
-                                            ? areaNames[
-                                                goal.area
-                                            ]
-                                            : "Unassigned"
-                                    }
-
-                                </span>
-
-
-                                ${
-                                    goal
-                                        ? `
-                                            <span class="tag">
-                                                🎯
-                                                ${escapeHtml(
-                                                    goal.name
-                                                )}
-                                            </span>
-                                        `
-                                        : ""
-                                }
-
-
-                                <span class="task-time">
-
-                                    ⏱
-                                    ${task.duration}
-                                    min
-
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="fit">
-
-                            ${
-                                !task.completed &&
-                                fitsEnergy
-                                    ? "GOOD FIT"
-                                    : ""
-                            }
-
-                        </div>
-
-                    </div>
-                `;
-            }
-        ).join("");
 }
 
 
-/* =========================================
-   STATS
-========================================= */
+/* ================================
+   ENERGY
+================================ */
 
-function renderStats() {
+function renderEnergy(){
 
-    const completed =
+  const box =
+    document.getElementById(
+      "energyButtons"
+    );
+
+  box.innerHTML = "";
+
+  for(let i=1;i<=10;i++){
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "energy-btn" +
+      (i===energy ? " selected" : "");
+
+    button.textContent = i;
+
+    button.onclick = () => {
+
+      energy = i;
+
+      save();
+
+      render();
+
+    };
+
+    box.appendChild(button);
+
+  }
+
+  document.getElementById(
+    "energy"
+  ).textContent = energy;
+
+}
+
+
+/* ================================
+   GOALS
+================================ */
+
+function renderGoals(){
+
+  const html =
+    goals.map(goal => {
+
+      const goalTasks =
         tasks.filter(
-            task =>
-                task.completed
+          task =>
+            task.goalId === goal.id
+        );
+
+      const completed =
+        goalTasks.filter(
+          task => task.completed
         ).length;
 
+      let progress =
+        goal.progress || 0;
 
-    const percentage =
-        tasks.length
-            ? Math.round(
-                (
-                    completed /
-                    tasks.length
-                ) * 100
+      if(goalTasks.length){
+
+        progress =
+          Math.max(
+            progress,
+            Math.round(
+              completed /
+              goalTasks.length *
+              100
             )
-            : 0;
+          );
+
+      }
+
+      return `
+
+        <div class="card goal">
+
+          <div class="goal-top">
+
+            <div>
+              <h3>
+                ${escapeHTML(goal.name)}
+              </h3>
+
+              <span class="badge">
+                ${areaName(goal.area)}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="goal-description">
+            ${escapeHTML(
+              goal.description ||
+              "A goal worth moving toward."
+            )}
+          </div>
+
+          <div class="progress">
+            <div style="width:${progress}%"></div>
+          </div>
+
+          <div class="goal-foot">
+
+            <span>${progress}% progress</span>
+
+            <span>
+              ${completed}/${goalTasks.length}
+              actions
+            </span>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
 
 
-    document.getElementById(
-        "goalCount"
-    ).textContent =
-        goals.length;
+  document.getElementById(
+    "goalList"
+  ).innerHTML =
+    html ||
+    `<div class="empty">
+      No goals yet. Start with one thing that matters.
+    </div>`;
 
 
-    document.getElementById(
-        "taskCount"
-    ).textContent =
-        tasks.length;
+  document.getElementById(
+    "allGoals"
+  ).innerHTML =
+    html ||
+    `<div class="empty">
+      No goals yet.
+    </div>`;
 
-
-    document.getElementById(
-        "completedCount"
-    ).textContent =
-        completed;
-
-
-    document.getElementById(
-        "dailyProgress"
-    ).textContent =
-        percentage + "%";
-
-
-    renderAreaStats();
 }
 
 
-/* =========================================
-   AREA STATS
-========================================= */
+/* ================================
+   TASKS
+================================ */
 
-function renderAreaStats() {
+function renderTasks(){
 
-    const areas = [
-        "finance",
-        "business",
-        "home",
-        "personal",
-        "travel"
-    ];
-
-
-    areas.forEach(
-        area => {
-
-            const areaGoals =
-                goals.filter(
-                    goal =>
-                        goal.area ===
-                        area
-                );
-
-
-            const areaProgress =
-                areaGoals.length
-                    ? Math.round(
-                        areaGoals.reduce(
-                            (
-                                sum,
-                                goal
-                            ) =>
-                                sum +
-                                (
-                                    goal.progress ||
-                                    0
-                                ),
-                            0
-                        )
-                        /
-                        areaGoals.length
-                    )
-                    : 0;
-
-
-            document.getElementById(
-                area + "Progress"
-            ).style.width =
-                areaProgress + "%";
-
-
-            document.getElementById(
-                area + "Count"
-            ).textContent =
-                `${areaGoals.length} ${
-                    areaGoals.length === 1
-                        ? "goal"
-                        : "goals"
-                }`;
-        }
+  const incomplete =
+    tasks.filter(
+      task => !task.completed
     );
-}
+
+  const completed =
+    tasks.filter(
+      task => task.completed
+    );
 
 
-/* =========================================
-   RECOMMENDATION
-========================================= */
+  incomplete.sort(
+    (a,b) => {
 
-function renderRecommendation() {
+      const aFit =
+        a.difficulty <=
+        Math.ceil(energy/3);
 
-    const text =
-        document.getElementById(
-            "recommendationText"
+      const bFit =
+        b.difficulty <=
+        Math.ceil(energy/3);
+
+      if(aFit !== bFit)
+        return bFit-aFit;
+
+      if(a.difficulty !== b.difficulty)
+        return a.difficulty-b.difficulty;
+
+      return a.duration-b.duration;
+
+    }
+  );
+
+
+  const sorted =
+    [...incomplete,...completed];
+
+
+  const container =
+    document.getElementById(
+      "taskList"
+    );
+
+
+  if(!sorted.length){
+
+    container.innerHTML =
+      `<div class="empty">
+        Nothing here. 🌱
+      </div>`;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    sorted.map(task => {
+
+      const goal =
+        goals.find(
+          g => g.id === task.goalId
         );
 
 
-    const incomplete =
-        tasks.filter(
-            task =>
-                !task.completed
-        );
+      const fits =
+        task.difficulty <=
+        Math.ceil(energy/3);
 
 
-    if (!incomplete.length) {
+      return `
 
-        text.textContent =
-            "✨ You've completed everything currently on your list. You don't need to manufacture more work. Rest counts too.";
+        <div class="task ${task.completed ? "done" : ""}">
 
-        return;
-    }
+          <div
+            class="check ${task.completed ? "done" : ""}"
+            onclick="toggleTask(${task.id})">
+          </div>
 
+          <div>
 
-    if (energy <= 2) {
+            <div class="task-name">
+              ${escapeHTML(task.name)}
+            </div>
 
-        text.textContent =
-            "Your energy is low today. Protect your momentum. Choose the smallest useful action you can complete without draining yourself.";
+            <div class="meta">
 
-        return;
-    }
+              <span class="tag">
+                ${goal ? areaName(goal.area) : "Unassigned"}
+              </span>
 
+              ${
+                goal
+                ? `<span class="tag">
+                    🎯 ${escapeHTML(goal.name)}
+                   </span>`
+                : ""
+              }
 
-    if (energy <= 4) {
+              <span class="tag">
+                ⏱ ${task.duration}m
+              </span>
 
-        text.textContent =
-            "This is a lower-capacity day. Start with one easy win, then reassess. Progress doesn't have to be dramatic to count.";
+            </div>
 
-        return;
-    }
+          </div>
 
+          <div>
 
-    if (energy <= 7) {
+            ${
+              !task.completed && fits
+              ? `<div class="fit">GOOD FIT</div>`
+              : ""
+            }
 
-        text.textContent =
-            "You have a moderate amount of capacity. Start with a quick win, then use your remaining attention on one meaningful action.";
+            ${
+              !task.completed
+              ? `<button
+                   class="timer"
+                   onclick="startTimer(${task.id})">
+                   ${task.elapsed > 0
+                     ? "▶ Resume"
+                     : "▶ Start"}
+                 </button>`
+              : ""
+            }
 
-        return;
-    }
+          </div>
 
+        </div>
 
-    text.textContent =
-        "You've got plenty of energy today. Consider tackling one of the harder actions you've been avoiding — but remember, high energy isn't a debt you owe yourself.";
+      `;
+
+    }).join("");
 
 }
 
 
-/* =========================================
-   TOGGLE TASK
-========================================= */
+/* ================================
+   STATS
+================================ */
 
-function toggleTask(id) {
+function renderStats(){
 
-    const task =
-        tasks.find(
-            task =>
-                task.id === id
-        );
+  const completed =
+    tasks.filter(
+      task => task.completed
+    ).length;
 
-
-    if (!task)
-        return;
-
-
-    task.completed =
-        !task.completed;
-
-
-    /*
-        For now, completing a task
-        nudges the associated goal.
-
-        Later we'll replace this with
-        a much smarter progress system.
-    */
-
-    if (
-        task.completed
-    ) {
-
-        const goal =
-            goals.find(
-                g =>
-                    g.id ===
-                    task.goalId
-            );
+  const progress =
+    tasks.length
+    ? Math.round(
+        completed /
+        tasks.length *
+        100
+      )
+    : 0;
 
 
-        if (goal) {
-
-            goal.progress =
-                Math.min(
-                    100,
-
-                    (goal.progress || 0) +
-                    5
-                );
-        }
-    }
+  document.getElementById(
+    "goalStat"
+  ).textContent =
+    goals.length;
 
 
-    save();
-
-    render();
-}
-
-
-/* =========================================
-   GOAL MODAL
-========================================= */
-
-function openGoalModal() {
-
-    document
-        .getElementById(
-            "goalModal"
-        )
-        .classList
-        .add("open");
+  document.getElementById(
+    "taskStat"
+  ).textContent =
+    tasks.length;
 
 
-    document
-        .getElementById(
-            "goalName"
-        )
-        .focus();
-}
+  document.getElementById(
+    "completeStat"
+  ).textContent =
+    completed;
 
 
-function closeGoalModal() {
-
-    document
-        .getElementById(
-            "goalModal"
-        )
-        .classList
-        .remove("open");
-}
+  document.getElementById(
+    "progressStat"
+  ).textContent =
+    progress + "%";
 
 
-/* =========================================
-   ADD GOAL
-========================================= */
-
-function addGoal() {
-
-    const name =
-        document
-            .getElementById(
-                "goalName"
-            )
-            .value
-            .trim();
+  const areas = [
+    "finance",
+    "business",
+    "home",
+    "personal",
+    "travel"
+  ];
 
 
-    const area =
-        document
-            .getElementById(
-                "goalArea"
-            )
-            .value;
+  areas.forEach(area => {
+
+    const areaGoals =
+      goals.filter(
+        goal =>
+          goal.area === area
+      );
 
 
-    const description =
-        document
-            .getElementById(
-                "goalDescription"
-            )
-            .value
-            .trim();
-
-
-    if (!name) {
-
-        alert(
-            "Give your goal a name first."
-        );
-
-        return;
-    }
-
-
-    goals.push({
-
-        id:
-            Date.now(),
-
-        name,
-
-        area,
-
-        description,
-
-        progress:
+    const average =
+      areaGoals.length
+      ? Math.round(
+          areaGoals.reduce(
+            (sum,g) =>
+              sum +
+              (g.progress || 0),
             0
-
-    });
-
-
-    save();
-
-    document
-        .getElementById(
-            "goalName"
+          ) /
+          areaGoals.length
         )
-        .value = "";
+      : 0;
 
 
-    document
-        .getElementById(
-            "goalDescription"
-        )
-        .value = "";
+    document.getElementById(
+      area+"Bar"
+    ).style.width =
+      average+"%";
 
 
-    closeGoalModal();
+    document.getElementById(
+      area+"Info"
+    ).textContent =
+      `${areaGoals.length} ${
+        areaGoals.length===1
+        ? "goal"
+        : "goals"
+      } · ${average}% average`;
 
-    render();
+  });
+
 }
 
 
-/* =========================================
-   TASK MODAL
-========================================= */
+/* ================================
+   RECOMMENDATION
+================================ */
 
-function openTaskModal() {
+function renderRecommendation(){
 
-    populateGoalSelect();
+  const incomplete =
+    tasks.filter(
+      task => !task.completed
+    );
 
 
-    if (!goals.length) {
+  let message;
 
-        alert(
-            "Create a goal first. Your daily actions should lead somewhere."
-        );
 
-        return;
+  if(!incomplete.length){
+
+    message =
+      "✨ Everything on your current list is complete. You don't need to create more work just to feel productive.";
+
+  }
+
+  else if(energy <= 2){
+
+    message =
+      "Your capacity is low today. Protect your momentum. Pick one tiny action and let that be enough.";
+
+  }
+
+  else if(energy <= 4){
+
+    message =
+      "This is a lower-capacity day. Start with a quick win, then reassess. Small progress is still progress.";
+
+  }
+
+  else if(energy <= 7){
+
+    message =
+      "You have moderate capacity. I'd choose one easy win and one meaningful action rather than trying to conquer everything.";
+
+  }
+
+  else{
+
+    message =
+      "You've got high capacity today. This is a good opportunity for deeper work, especially on something you've been avoiding.";
+
+  }
+
+
+  document.getElementById(
+    "recommendation"
+  ).textContent =
+    message;
+
+}
+
+
+/* ================================
+   AREA STATS
+================================ */
+
+function renderHistory(){
+
+  const grid =
+    document.getElementById(
+      "historyGrid"
+    );
+
+  grid.innerHTML = "";
+
+
+  for(let i=29;i>=0;i--){
+
+    const date =
+      new Date();
+
+    date.setDate(
+      date.getDate()-i
+    );
+
+
+    const key =
+      date.toISOString().slice(0,10);
+
+
+    const day =
+      document.createElement("div");
+
+    day.className =
+      "day";
+
+
+    if(history[key]){
+
+      day.classList.add(
+        history[key] >= 3
+          ? "good"
+          : "active"
+      );
+
     }
 
 
-    document
-        .getElementById(
-            "taskModal"
-        )
-        .classList
-        .add("open");
+    day.title =
+      `${key}: ${
+        history[key] || 0
+      } completed`;
 
 
-    document
-        .getElementById(
-            "taskName"
-        )
-        .focus();
+    day.textContent =
+      date.getDate();
+
+
+    grid.appendChild(day);
+
+  }
+
+
+  const completed =
+    tasks.filter(
+      task => task.completed
+    ).length;
+
+
+  const minutes =
+    tasks
+      .filter(task => task.completed)
+      .reduce(
+        (sum,task) =>
+          sum + task.duration,
+        0
+      );
+
+
+  document.getElementById(
+    "historyTasks"
+  ).textContent =
+    tasks.length;
+
+
+  document.getElementById(
+    "historyCompleted"
+  ).textContent =
+    completed;
+
+
+  document.getElementById(
+    "historyTime"
+  ).textContent =
+    formatMinutes(minutes);
+
 }
 
 
-function closeTaskModal() {
+/* ================================
+   INSIGHTS
+================================ */
 
-    document
-        .getElementById(
-            "taskModal"
-        )
-        .classList
-        .remove("open");
+function renderInsights(){
+
+  const completed =
+    tasks.filter(
+      task => task.completed
+    );
+
+
+  const rate =
+    tasks.length
+    ? Math.round(
+        completed.length /
+        tasks.length *
+        100
+      )
+    : 0;
+
+
+  const average =
+    tasks.length
+    ? Math.round(
+        tasks.reduce(
+          (sum,t) =>
+            sum+t.duration,
+          0
+        ) /
+        tasks.length
+      )
+    : 0;
+
+
+  document.getElementById(
+    "completionRate"
+  ).textContent =
+    rate+"%";
+
+
+  document.getElementById(
+    "averageTask"
+  ).textContent =
+    average+"m";
+
+
+  document.getElementById(
+    "bestEnergy"
+  ).textContent =
+    completed.length
+    ? energy+"/10"
+    : "—";
+
+
+  document.getElementById(
+    "prediction"
+  ).textContent =
+    goals.length
+    ? `You currently have ${goals.length} active goal${
+        goals.length===1 ? "" : "s"
+      }. As you build more history, this dashboard can begin estimating how long your tasks actually take and which energy levels produce your strongest completion rates.`
+    : "Create a goal and start completing actions. Your personal patterns will become clearer with time.";
+
 }
 
 
-/* =========================================
-   GOAL SELECT
-========================================= */
+/* ================================
+   PROJECTS
+================================ */
 
-function populateGoalSelect() {
+function renderProjects(){
 
-    const select =
-        document.getElementById(
-            "taskGoal"
+  const container =
+    document.getElementById(
+      "projectList"
+    );
+
+
+  if(!projects.length){
+
+    container.innerHTML =
+      `<div class="empty">
+        No projects yet.
+      </div>`;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    projects.map(project => {
+
+      const goal =
+        goals.find(
+          g => g.id === project.goalId
         );
 
 
-    select.innerHTML =
-        goals.map(
-            goal =>
-                `
-                <option value="${goal.id}">
+      const projectTasks =
+        tasks.filter(
+          task =>
+            task.projectId === project.id
+        );
 
-                    ${areaNames[
-                        goal.area
-                    ]}
-                    —
-                    ${escapeHtml(
-                        goal.name
-                    )}
 
-                </option>
-                `
-        ).join("");
+      return `
+
+        <div class="card goal">
+
+          <h3>
+            📁 ${escapeHTML(project.name)}
+          </h3>
+
+          <div class="goal-description">
+
+            ${
+              goal
+              ? `Part of <strong>
+                  ${escapeHTML(goal.name)}
+                 </strong>`
+              : "No goal assigned"
+            }
+
+          </div>
+
+          <span class="badge">
+            ${projectTasks.length} actions
+          </span>
+
+        </div>
+
+      `;
+
+    }).join("");
+
 }
 
 
-/* =========================================
+/* ================================
+   TOGGLE TASK
+================================ */
+
+function toggleTask(id){
+
+  const task =
+    tasks.find(
+      task => task.id === id
+    );
+
+
+  if(!task) return;
+
+
+  task.completed =
+    !task.completed;
+
+
+  if(task.completed){
+
+    const key =
+      todayKey();
+
+    history[key] =
+      (history[key] || 0) + 1;
+
+
+    const goal =
+      goals.find(
+        g => g.id === task.goalId
+      );
+
+
+    if(goal){
+
+      goal.progress =
+        Math.min(
+          100,
+          (goal.progress || 0)+5
+        );
+
+    }
+
+  }
+
+
+  save();
+
+  render();
+
+}
+
+
+/* ================================
+   TIMER
+================================ */
+
+function startTimer(id){
+
+  const task =
+    tasks.find(
+      task => task.id === id
+    );
+
+
+  if(!task) return;
+
+
+  const start =
+    Date.now();
+
+
+  alert(
+    "Timer started for:\n\n" +
+    task.name +
+    "\n\nThe next version will keep the timer visible while you work."
+  );
+
+
+  setTimeout(
+    () => {
+
+      const minutes =
+        Math.round(
+          (Date.now()-start) /
+          60000
+        );
+
+
+      task.elapsed += minutes;
+
+      save();
+
+    },
+    60000
+  );
+
+}
+
+
+/* ================================
+   FORMAT
+================================ */
+
+function formatMinutes(minutes){
+
+  if(minutes < 60)
+    return minutes+"m";
+
+
+  return (
+    Math.floor(minutes/60)
+    +"h "
+    +(minutes%60)
+    +"m"
+  );
+
+}
+
+
+/* ================================
+   NAVIGATION
+================================ */
+
+function showPage(page,button){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(
+      p => p.classList.remove("active")
+    );
+
+
+  document
+    .querySelectorAll(".nav")
+    .forEach(
+      b => b.classList.remove("active")
+    );
+
+
+  document
+    .getElementById(page)
+    .classList.add("active");
+
+
+  button.classList.add("active");
+
+
+  render();
+
+}
+
+
+/* ================================
+   MODALS
+================================ */
+
+function closeModals(){
+
+  document
+    .querySelectorAll(".modal")
+    .forEach(
+      modal =>
+        modal.classList.remove("open")
+    );
+
+}
+
+
+function openGoal(){
+
+  document
+    .getElementById("goalModal")
+    .classList.add("open");
+
+  document
+    .getElementById("goalName")
+    .focus();
+
+}
+
+
+function openProject(){
+
+  if(!goals.length){
+
+    alert(
+      "Create a goal first."
+    );
+
+    return;
+
+  }
+
+
+  const select =
+    document.getElementById(
+      "projectGoal"
+    );
+
+
+  select.innerHTML =
+    goals.map(
+      goal =>
+        `<option value="${goal.id}">
+          ${areaName(goal.area)}
+          — ${escapeHTML(goal.name)}
+         </option>`
+    ).join("");
+
+
+  document
+    .getElementById("projectModal")
+    .classList.add("open");
+
+}
+
+
+function openTask(){
+
+  if(!goals.length){
+
+    alert(
+      "Create a goal first. Your actions should lead somewhere."
+    );
+
+    return;
+
+  }
+
+
+  const select =
+    document.getElementById(
+      "taskGoal"
+    );
+
+
+  select.innerHTML =
+    goals.map(
+      goal =>
+        `<option value="${goal.id}">
+          ${areaName(goal.area)}
+          — ${escapeHTML(goal.name)}
+         </option>`
+    ).join("");
+
+
+  document
+    .getElementById("taskModal")
+    .classList.add("open");
+
+}
+
+
+/* ================================
+   ADD GOAL
+================================ */
+
+function addGoal(){
+
+  const name =
+    document
+      .getElementById("goalName")
+      .value
+      .trim();
+
+
+  const area =
+    document
+      .getElementById("goalArea")
+      .value;
+
+
+  const description =
+    document
+      .getElementById("goalDescription")
+      .value
+      .trim();
+
+
+  if(!name){
+
+    alert(
+      "Give your goal a name."
+    );
+
+    return;
+
+  }
+
+
+  goals.push({
+
+    id:Date.now(),
+
+    name,
+
+    area,
+
+    description,
+
+    progress:0
+
+  });
+
+
+  document
+    .getElementById("goalName")
+    .value="";
+
+
+  document
+    .getElementById("goalDescription")
+    .value="";
+
+
+  closeModals();
+
+  save();
+
+  render();
+
+}
+
+
+/* ================================
+   ADD PROJECT
+================================ */
+
+function addProject(){
+
+  const name =
+    document
+      .getElementById("projectName")
+      .value
+      .trim();
+
+
+  const goalId =
+    Number(
+      document
+        .getElementById("projectGoal")
+        .value
+    );
+
+
+  if(!name){
+
+    alert(
+      "Give your project a name."
+    );
+
+    return;
+
+  }
+
+
+  projects.push({
+
+    id:Date.now(),
+
+    name,
+
+    goalId
+
+  });
+
+
+  document
+    .getElementById("projectName")
+    .value="";
+
+
+  closeModals();
+
+  save();
+
+  render();
+
+}
+
+
+/* ================================
    ADD TASK
-========================================= */
+================================ */
 
-function addTask() {
+function addTask(){
 
-    const name =
-        document
-            .getElementById(
-                "taskName"
-            )
-            .value
-            .trim();
-
-
-    const goalId =
-        Number(
-            document
-                .getElementById(
-                    "taskGoal"
-                )
-                .value
-        );
-
-
-    const duration =
-        Number(
-            document
-                .getElementById(
-                    "taskDuration"
-                )
-                .value
-        );
-
-
-    const difficulty =
-        Number(
-            document
-                .getElementById(
-                    "taskDifficulty"
-                )
-                .value
-        );
-
-
-    if (!name) {
-
-        alert(
-            "Give your action a name first."
-        );
-
-        return;
-    }
-
-
-    tasks.push({
-
-        id:
-            Date.now(),
-
-        name,
-
-        goalId,
-
-        duration,
-
-        difficulty,
-
-        completed:
-            false
-
-    });
-
-
-    save();
-
-
+  const name =
     document
-        .getElementById(
-            "taskName"
-        )
-        .value = "";
+      .getElementById("taskName")
+      .value
+      .trim();
 
 
-    closeTaskModal();
+  const goalId =
+    Number(
+      document
+        .getElementById("taskGoal")
+        .value
+    );
 
-    render();
+
+  const duration =
+    Number(
+      document
+        .getElementById("taskDuration")
+        .value
+    );
+
+
+  const difficulty =
+    Number(
+      document
+        .getElementById("taskDifficulty")
+        .value
+    );
+
+
+  if(!name){
+
+    alert(
+      "Give your action a name."
+    );
+
+    return;
+
+  }
+
+
+  tasks.push({
+
+    id:Date.now(),
+
+    name,
+
+    goalId,
+
+    duration,
+
+    difficulty,
+
+    completed:false,
+
+    date:todayKey(),
+
+    elapsed:0
+
+  });
+
+
+  document
+    .getElementById("taskName")
+    .value="";
+
+
+  closeModals();
+
+  save();
+
+  render();
+
 }
 
 
-/* =========================================
-   SECURITY
-========================================= */
-
-function escapeHtml(text) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-    div.textContent =
-        text;
-
-    return div.innerHTML;
-}
-
-
-/* =========================================
+/* ================================
    RENDER
-========================================= */
+================================ */
 
-function render() {
+function render(){
 
-    renderEnergy();
+  renderEnergy();
 
-    renderGoals();
+  renderGoals();
 
-    renderTasks();
+  renderTasks();
 
-    renderStats();
+  renderStats();
 
-    renderRecommendation();
+  renderRecommendation();
+
+  renderHistory();
+
+  renderInsights();
+
+  renderProjects();
+
 }
 
 
-/* =========================================
+/* ================================
    START
-========================================= */
+================================ */
 
 renderDate();
 
@@ -2665,4 +2332,4 @@ render();
 
 </body>
 </html>
-```
+          
