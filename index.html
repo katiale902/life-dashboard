@@ -1453,7 +1453,19 @@ function renderTasks(){
 
 
   incomplete.sort(
-    (a,b) => {
+    (a,b) => {const priorityRank = {
+  high: 3,
+  medium: 2,
+  low: 1
+};
+
+const priorityDifference =
+  (priorityRank[b.priority] || 2) -
+  (priorityRank[a.priority] || 2);
+
+if (priorityDifference !== 0) {
+  return priorityDifference;
+}
 
       const aFit =
         a.difficulty <=
@@ -1546,7 +1558,27 @@ function renderTasks(){
 
           
             <div class="meta">
+<span class="tag">
+  ${
+    task.priority === "high" ? "🔴 High" :
+    task.priority === "medium" ? "🟡 Medium" :
+    "🟢 Low"
+  } priority
+</span>
 
+${
+  task.dueDate
+  ? `<span class="tag" style="color:${
+      task.dueDate < todayKey() ? "#c45b72" : "#696674"
+    }">
+      📅 ${
+        task.dueDate < todayKey()
+        ? "OVERDUE · "
+        : ""
+      }${task.dueDate}
+    </span>`
+  : ""
+}
               <span class="tag">
                 ${goal ? areaName(goal.area) : "Unassigned"}
               </span>
