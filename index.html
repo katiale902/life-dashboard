@@ -542,6 +542,7 @@ input:focus,select:focus,textarea:focus{
   <button class="nav" onclick="showPage('goals',this)">🎯 Goals</button>
   <button class="nav" onclick="showPage('projects',this)">📁 Projects</button>
   <button class="nav" onclick="showPage('history',this)">📅 History</button>
+  <button class="nav" onclick="showPage('planner',this)">🗓 Planner</button>
   <button class="nav" onclick="showPage('insights',this)">🧠 Insights</button>
 
 </aside>
@@ -763,6 +764,43 @@ input:focus,select:focus,textarea:focus{
 
 </div>
 
+
+<!-- DAILY PLANNER -->
+
+<div id="planner" class="page">
+
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">Make room for what matters</div>
+      <h1>Daily Planner</h1>
+      <p class="muted">Your day, at your pace.</p>
+    </div>
+    <button class="primary" onclick="openSchedule()">
+      + Add event
+    </button>
+  </div>
+
+  <div class="card" style="padding:20px;margin-bottom:20px;">
+
+    <div class="form-group">
+      <label>SELECT DATE</label>
+      <input type="date" id="plannerDate"
+        onchange="renderPlanner()">
+    </div>
+
+    <div id="plannerSummary" class="muted">
+      Your schedule will appear here.
+    </div>
+
+  </div>
+
+  <div class="card" id="scheduleList">
+    <div class="empty">
+      Your day is waiting to be planned. 🌷
+    </div>
+  </div>
+
+</div>
 
 <!-- HISTORY -->
 
@@ -1008,6 +1046,62 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 
+<!-- SCHEDULE MODAL -->
+
+<div class="modal" id="scheduleModal">
+
+  <div class="modal-box">
+
+    <h2>Add to your day</h2>
+
+    <p class="muted">
+      Give your time a purpose.
+    </p>
+
+    <div class="form-group">
+      <label>ACTIVITY</label>
+      <input id="scheduleName"
+        placeholder="Morning routine">
+    </div>
+
+    <div class="form-group">
+      <label>DATE</label>
+      <input type="date" id="scheduleDate">
+    </div>
+
+    <div class="form-group">
+      <label>START TIME (24-HOUR)</label>
+      <input type="time" id="scheduleStart">
+    </div>
+
+    <div class="form-group">
+      <label>END TIME (24-HOUR)</label>
+      <input type="time" id="scheduleEnd">
+    </div>
+
+    <div class="form-group">
+      <label>LIFE AREA</label>
+      <select id="scheduleArea">
+        <option value="personal">🌱 Personal</option>
+        <option value="business">💼 Business</option>
+        <option value="home">🏠 Home</option>
+        <option value="finance">💰 Finance</option>
+        <option value="travel">✈️ Travel</option>
+      </select>
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary"
+        onclick="closeModals()">Cancel</button>
+
+      <button class="primary"
+        onclick="addSchedule()">Save event</button>
+    </div>
+
+  </div>
+
+</div>
+
 <script>
 
 /* ================================
@@ -1129,6 +1223,155 @@ let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || {};
 let energy =
   Number(localStorage.getItem(ENERGY_KEY)) || 5;
 
+
+/* ================================
+   DAILY PLANNER
+================================ */
+
+const SCHEDULE_KEY = "lifeDashboardScheduleV1";
+
+let schedule = loadData(SCHEDULE_KEY, []);
+
+function saveSchedule() {
+  localStorage.setItem(
+    SCHEDULE_KEY,
+    JSON.stringify(schedule)
+  );
+}
+
+function openSchedule() {
+
+  document.getElementById("scheduleName").value = "";
+
+  document.getElementById("scheduleDate").value =
+    document.getElementById("plannerDate").value ||
+    todayKey();
+
+  document.getElementById("scheduleStart").value = "09:00";
+  document.getElementById("scheduleEnd").value = "10:00";
+
+  document.getElementById("scheduleModal")
+    .classList.add("open");
+
+}
+
+function addSchedule() {
+
+  const name = document.getElementById("scheduleName")
+    .value.trim();
+
+  const date = document.getElementById("scheduleDate")
+    .value;
+
+  const start = document.getElementById("scheduleStart")
+    .value;
+
+  const end = document.getElementById("scheduleEnd")
+    .value;
+
+  const area = document.getElementById("scheduleArea")
+    .value;
+
+  if (!name || !date || !start || !end) {
+    alert("Please complete all event details.");
+    return;
+  }
+
+  if (end <= start) {
+    alert("End time must be later than start time.");
+    return;
+  }
+
+  schedule.push({
+    id: Date.now(),
+    name,
+    date,
+    start,
+    end,
+    area
+  });
+
+  saveSchedule();
+  closeModals();
+
+  document.getElementById("plannerDate").value = date;
+
+  renderPlanner();
+
+}
+
+function renderPlanner() {
+
+  const dateInput = document.getElementById("plannerDate");
+
+  if (!dateInput) return;
+
+  const date = dateInput.value || todayKey();
+
+  const events = schedule
+    .filter(event => event.date === date)
+    .sort((a,b) => a.start.localeCompare(b.start));
+
+  const container = document.getElementById("scheduleList");
+
+  document.getElementById("plannerSummary").textContent =
+    `${events.length} scheduled ${events.length === 1 ? "event" : "events"} · ${date}`;
+
+  if (!events.length) {
+
+    container.innerHTML =
+      `<div class="empty">
+        Nothing scheduled yet. Make some room for yourself. 🌷
+      </div>`;
+
+    return;
+
+  }
+
+  container.innerHTML = events.map(event => `
+
+    <div class="task">
+
+      <div style="font-size:12px;font-weight:900;color:var(--purple);">
+        ${escapeHTML(event.start)}
+      </div>
+
+      <div>
+        <div class="task-name">
+          ${escapeHTML(event.name)}
+        </div>
+
+        <div class="meta">
+          <span class="tag">
+            ${areaName(event.area)}
+          </span>
+          <span class="tag">
+            ${escapeHTML(event.start)}–${escapeHTML(event.end)}
+          </span>
+        </div>
+      </div>
+
+      <button class="timer"
+        onclick="deleteSchedule(${event.id})">
+        ✕
+      </button>
+
+    </div>
+
+  `).join("");
+
+}
+
+function deleteSchedule(id) {
+
+  if (!confirm("Delete this scheduled event?")) return;
+
+  schedule = schedule.filter(event => event.id !== id);
+
+  saveSchedule();
+  renderPlanner();
+
+}
 
 /* ================================
    HELPERS
@@ -1316,7 +1559,10 @@ function renderEnergy(){
 
       save();
 
-      render();
+      renderPlanner();
+      function render(){
+
+}
 
     };
 
