@@ -603,6 +603,20 @@ input:focus,select:focus,textarea:focus{
       <div class="eyebrow">Your life, one step at a time</div>
       <h1>Good morning, Katia 👋</h1>
       <div class="date" id="date"></div>
+
+<div id="liveClock" style="
+  font-size:26px;
+  font-weight:900;
+  color:var(--purple);
+  margin-top:8px;
+  font-variant-numeric:tabular-nums;
+">
+  00:00:00
+</div>
+
+<div class="muted" style="font-size:11px;">
+  LOCAL TIME · 24-HOUR FORMAT
+</div>
     </div>
 
     <div class="energy">
@@ -1225,6 +1239,7 @@ function areaName(area){
    DATE
 ================================ */
 
+
 function renderDate(){
 
   document.getElementById("date").textContent =
@@ -1236,6 +1251,24 @@ function renderDate(){
         day:"numeric",
         year:"numeric"
       }
+    );
+
+}
+
+function updateClock(){
+
+  const now = new Date();
+
+  document.getElementById("liveClock").textContent =
+    now.toLocaleTimeString("en-GB", {
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit",
+      hour12:false
+    });
+
+}
+
     );
 
 }
