@@ -1282,6 +1282,21 @@ function addSchedule() {
     return;
   }
 
+// Check for overlapping events on the same day.
+
+const conflict = schedule.some(event =>
+  event.date === date &&
+  start < event.end &&
+  end > event.start
+);
+
+if (conflict) {
+  alert(
+    "This time overlaps with another scheduled event. Please choose another time."
+  );
+  return;
+}
+
   schedule.push({
     id: Date.now(),
     name,
@@ -1351,14 +1366,80 @@ function renderPlanner() {
         </div>
       </div>
 
-      <button class="timer"
-        onclick="deleteSchedule(${event.id})">
-        ✕
-      </button>
+      <div style="display:flex;gap:5px;">
+  <button class="timer"
+    onclick="editSchedule(${event.id})">
+    ✏️
+  </button>
 
-    </div>
+  <button class="timer"
+    onclick="deleteSchedule(${event.id})">
+    ✕
+  </button>
+</div>
+
+
 
   `).join("");
+
+}
+
+function editSchedule(id) {
+
+  const event = schedule.find(e => e.id === id);
+
+  if (!event) return;
+
+  const name = prompt("Activity name:", event.name);
+  if (name === null) return;
+
+  if (!name.trim()) {
+    alert("Activity name cannot be empty.");
+    return;
+  }
+
+  const start = prompt("Start time (HH:MM):", event.start);
+  if (start === null) return;
+
+  const end = prompt("End time (HH:MM):", event.end);
+  if (end === null) return;
+
+  const date = prompt("Date (YYYY-MM-DD):", event.date);
+  if (date === null) return;
+
+  if (
+    !/^\d{2}:\d{2}$/.test(start) ||
+    !/^\d{2}:\d{2}$/.test(end) ||
+    !/^(\d{4})-(\d{2})-(\d{2})$/.test(date)
+  ) {
+    alert("Please check your date and time format.");
+    return;
+  }
+
+  if (start >= end) {
+    alert("End time must be later than start time.");
+    return;
+  }
+
+  const conflict = schedule.some(e =>
+    e.id !== id &&
+    e.date === date &&
+    start < e.end &&
+    end > e.start
+  );
+
+  if (conflict) {
+    alert("This overlaps with another event.");
+    return;
+  }
+
+  event.name = name.trim();
+  event.start = start;
+  event.end = end;
+  event.date = date;
+
+  saveSchedule();
+  renderPlanner();
 
 }
 
