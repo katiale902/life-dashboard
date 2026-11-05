@@ -1508,12 +1508,31 @@ function renderTasks(){
             onclick="toggleTask(${task.id})">
           </div>
 
+<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+
+  ${!task.completed ? `
+    <button class="timer"
+      onclick="startTimer(${task.id})">
+      ▶ Start
+    </button>
+  ` : ""}
+
+  <button class="timer"
+    onclick="editTask(${task.id})">
+    ✏️ Edit
+  </button>
+
+  <button class="timer"
+    onclick="deleteTask(${task.id})"
+    style="color:#c46b82;">
+    🗑 Delete
+  </button>
+
+</div>
+
           <div>
 
-            <div class="task-name">
-              ${escapeHTML(task.name)}
-            </div>
-
+          
             <div class="meta">
 
               <span class="tag">
@@ -1546,13 +1565,7 @@ function renderTasks(){
 
             ${
               !task.completed
-              ? `<button
-                   class="timer"
-                   onclick="startTimer(${task.id})">
-                   ${task.elapsed > 0
-                     ? "▶ Resume"
-                     : "▶ Start"}
-                 </button>`
+             
               : ""
             }
 
@@ -2590,6 +2603,66 @@ function importBackup(event) {
   };
 
   reader.readAsText(file);
+
+}
+
+/* ================================
+   EDIT AND DELETE TASKS
+================================ */
+
+function editTask(id) {
+
+  const task = tasks.find(t => t.id === id);
+
+  if (!task) return;
+
+  const newName = prompt("Edit task name:", task.name);
+
+  if (newName === null) return;
+
+  if (!newName.trim()) {
+    alert("Task name cannot be empty.");
+    return;
+  }
+
+  const newDuration = prompt(
+    "Estimated duration in minutes:",
+    task.duration
+  );
+
+  if (newDuration === null) return;
+
+  const duration = Number(newDuration);
+
+  if (!Number.isInteger(duration) || duration < 1 || duration > 1440) {
+    alert("Enter a duration between 1 and 1440 minutes.");
+    return;
+  }
+
+  task.name = newName.trim();
+  task.duration = duration;
+
+  save();
+  render();
+
+}
+
+function deleteTask(id) {
+
+  const task = tasks.find(t => t.id === id);
+
+  if (!task) return;
+
+  const confirmed = confirm(
+    `Delete "${task.name}"? This cannot be undone.`
+  );
+
+  if (!confirmed) return;
+
+  tasks = tasks.filter(t => t.id !== id);
+
+  save();
+  render();
 
 }
 
