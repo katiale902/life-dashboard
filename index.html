@@ -551,6 +551,51 @@ input:focus,select:focus,textarea:focus{
 <!-- TODAY -->
 
 <div id="today" class="page active">
+  
+<!-- DATA BACKUP CENTER -->
+
+<div class="section card" style="padding:22px; margin-bottom:24px;">
+
+  <div class="section-head">
+    <div>
+      <h2>Data & Backups</h2>
+      <p class="muted">Keep your personal data safe.</p>
+    </div>
+    <span>☁️</span>
+  </div>
+
+  <p class="muted">
+    Download a copy of your goals, projects, tasks,
+    history and energy settings.
+  </p>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+
+    <button class="primary" onclick="downloadBackup()">
+      ↓ Export backup
+    </button>
+
+    <button class="secondary"
+      onclick="document.getElementById('backupFile').click()">
+      ↑ Restore backup
+    </button>
+
+  </div>
+
+  <input
+    type="file"
+    id="backupFile"
+    accept=".json,application/json"
+    onchange="importBackup(event)"
+    style="display:none;"
+  >
+
+  <p class="muted" style="font-size:11px; margin-top:14px;">
+    Your backup is downloaded directly to your device.
+  </p>
+
+</div>
+
 
   <div class="top">
 
@@ -600,7 +645,7 @@ input:focus,select:focus,textarea:focus{
   </div>
 
   <div class="recommendation">
-    <strong>🧠 Today's recommendation</strong>
+    <strong>🧠 Today's recommendations</strong>
     <p id="recommendation"></p>
   </div>
 
@@ -2302,6 +2347,173 @@ function addTask(){
 
 }
 
+
+/* ================================
+   DATA BACKUP SYSTEM
+================================ */
+
+function downloadBackup() {
+
+  const backup = {
+    app: "LifeDashboard",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+
+    data: {
+      goals: goals,
+      projects: projects,
+      tasks: tasks,
+      history: history,
+      energy: energy
+    }
+  };
+
+  const file = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(file);
+
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "life-dashboard-backup-" +
+    todayKey() + ".json";
+
+  link.click();
+
+  URL.revokeObjectURL(url);
+
+  alert("Your backup has been downloaded! 💜");
+
+}
+
+
+function importBackup(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+
+    try {
+
+      const backup = JSON.parse(e.target.result);
+
+      if (
+        backup.app !== "LifeDashboard" ||
+        backup.version !== 1 ||
+        !backup.data
+      ) {
+        throw new Error("Invalid backup file.");
+      }
+
+      const data = backup.data;
+
+      const validAreas = [
+        "finance",
+        "business",
+        "home",
+        "personal",
+        "travel"
+      ];
+
+      if (
+        !Array.isArray(data.goals) ||
+        !Array.isArray(data.projects) ||
+        !Array.isArray(data.tasks) ||
+        !data.history ||
+        typeof data.history !== "object" ||
+        Array.isArray(data.history) ||
+        !Number.isInteger(data.energy) ||
+        data.energy < 1 ||
+        data.energy > 10
+      ) {
+        throw new Error("Backup data is incomplete.");
+      }
+
+      const validGoals = data.goals.every(g =>
+        g &&
+        Number.isFinite(g.id) &&
+        typeof g.name === "string" &&
+        validAreas.includes(g.area)
+      );
+
+      const validProjects = data.projects.every(p =>
+        p &&
+        Number.isFinite(p.id) &&
+        typeof p.name === "string" &&
+        Number.isFinite(p.goalId)
+      );
+
+      const validTasks = data.tasks.every(t =>
+        t &&
+        Number.isFinite(t.id) &&
+        typeof t.name === "string" &&
+        Number.isFinite(t.goalId) &&
+        Number.isFinite(t.duration) &&
+        typeof t.completed === "boolean"
+      );
+
+      if (!validGoals || !validProjects || !validTasks) {
+        throw new Error("Backup contains invalid records.");
+      }
+
+      if (
+        !Object.values(data.history).every(v =>
+          Number.isFinite(v) && v >= 0
+        )
+      ) {
+        throw new Error("Invalid history data.");
+      }
+
+      const confirmed = confirm(
+        "Restoring this backup will replace your current dashboard data. Continue?"
+      );
+
+      if (!confirmed) return;
+
+      goals = data.goals;
+      projects = data.projects;
+      tasks = data.tasks;
+      history = data.history;
+      energy = data.energy;
+
+      save();
+      render();
+
+      alert("Your dashboard has been restored! 💗");
+
+    }
+
+    catch(error) {
+
+      alert(
+        "Could not restore backup: " + error.message
+      );
+
+    }
+
+    finally {
+
+      event.target.value = "";
+
+    }
+
+  };
+
+  reader.onerror = function() {
+    alert("Unable to read this backup file.");
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+
+}
 
 /* ================================
    RENDER
