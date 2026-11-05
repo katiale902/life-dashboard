@@ -977,7 +977,19 @@ input:focus,select:focus,textarea:focus{
 
     <div class="form-group">
       <label>ENERGY REQUIRED</label>
+<div class="form-group">
+  <label>PRIORITY</label>
+  <select id="taskPriority">
+    <option value="low">🟢 Low</option>
+    <option value="medium" selected>🟡 Medium</option>
+    <option value="high">🔴 High</option>
+  </select>
+</div>
 
+<div class="form-group">
+  <label>DUE DATE</label>
+  <input type="date" id="taskDueDate">
+</div>
       <select id="taskDifficulty">
         <option value="1">🟢 Low</option>
         <option value="2">🟡 Medium</option>
@@ -2391,7 +2403,11 @@ function addTask(){
         .getElementById("taskDifficulty")
         .value
     );
+const priority =
+  document.getElementById("taskPriority").value;
 
+const dueDate =
+  document.getElementById("taskDueDate").value;
 
   if(!name){
 
@@ -2406,17 +2422,13 @@ function addTask(){
 
   tasks.push({
 
-    id:Date.now(),
-
-    name,
-
-    goalId,
-
-    duration,
-
-    difficulty,
-
-    completed:false,
+    id:name,
+goalId,
+duration,
+difficulty,
+priority,
+dueDate,
+completed:false,
 
     date:todayKey(),
 
