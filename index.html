@@ -2660,6 +2660,72 @@ function editTask(id) {
 
   if (!task) return;
 
+  const newName = prompt("Task name:", task.name);
+  if (newName === null) return;
+
+  if (!newName.trim()) {
+    alert("Task name cannot be empty.");
+    return;
+  }
+
+  const newDuration = prompt(
+    "Duration in minutes:",
+    task.duration
+  );
+
+  if (newDuration === null) return;
+
+  const duration = Number(newDuration);
+
+  if (!Number.isInteger(duration) || duration < 1 || duration > 1440) {
+    alert("Enter a duration between 1 and 1440 minutes.");
+    return;
+  }
+
+  const newPriority = prompt(
+    "Priority: low, medium or high",
+    task.priority || "medium"
+  );
+
+  if (newPriority === null) return;
+
+  const priority = newPriority.trim().toLowerCase();
+
+  if (!["low", "medium", "high"].includes(priority)) {
+    alert("Priority must be low, medium or high.");
+    return;
+  }
+
+  const newDueDate = prompt(
+    "Due date (YYYY-MM-DD), or leave blank:",
+    task.dueDate || ""
+  );
+
+  if (newDueDate === null) return;
+
+  if (
+    newDueDate &&
+    !/^\d{4}-\d{2}-\d{2}$/.test(newDueDate)
+  ) {
+    alert("Please use YYYY-MM-DD format.");
+    return;
+  }
+
+  task.name = newName.trim();
+  task.duration = duration;
+  task.priority = priority;
+  task.dueDate = newDueDate.trim();
+
+  save();
+  render();
+
+}
+
+
+  const task = tasks.find(t => t.id === id);
+
+  if (!task) return;
+
   const newName = prompt("Edit task name:", task.name);
 
   if (newName === null) return;
