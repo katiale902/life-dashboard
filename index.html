@@ -1,3147 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Life Dashboard</title>
-
-<style>
-*{box-sizing:border-box}
-
-
-:root{
-  --bg:#FFF9F5;
-  --card:#FFFFFF;
-  --text:#51465C;
-  --muted:#A49AAA;
-  --border:#F0E5EF;
-
-  --purple:#A88AD8;
-  --purple-soft:#F0E8FA;
-
-  --green:#8FC9AE;
-  --green-soft:#E6F5EB;
-
-  --blue:#91BCE0;
-  --blue-soft:#E8F2FC;
-
-  --orange:#E9B77F;
-  --orange-soft:#FFF1DF;
-
-  --pink:#E9A7C2;
-  --pink-soft:#FCEBF2;
-
-  --shadow:0 8px 28px rgba(120,90,130,.08);
-}
-
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
-}
-
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-
-.app{display:flex;min-height:100vh}
-
-.sidebar{
-  width:240px;
-  background:#211f2c;
-  color:white;
-  position:fixed;
-  inset:0 auto 0 0;
-  padding:25px 16px;
-  z-index:10
-}
-
-.logo{
-  font-size:21px;
-  font-weight:900;
-  padding:8px 10px 30px
-}
-
-.logo span{color:#a995ff}
-
-.nav{
-  width:100%;
-  border:0;
-  background:transparent;
-  color:#bdb9c9;
-  padding:12px;
-  border-radius:11px;
-  text-align:left;
-  margin-bottom:4px
-}
-
-.nav:hover,.nav.active{background:#353240;color:white}
-
-.main{
-  margin-left:240px;
-  width:calc(100% - 240px);
-  max-width:1500px;
-  padding:32px
-}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  gap:25px;
-  margin-bottom:25px
-}
-
-.eyebrow{
-  color:var(--purple);
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  font-size:12px;
-  font-weight:900
-}
-
-h1{
-  margin:4px 0;
-  font-size:clamp(28px,4vw,42px);
-  letter-spacing:-.04em
-}
-
-h2{margin:0;font-size:21px}
-h3{margin:0 0 6px}
-
-.date,.muted{color:var(--muted)}
-
-.energy{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:16px;
-  min-width:310px;
-  box-shadow:var(--shadow)
-}
-
-.energy-head{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:12px;
-  font-weight:800
-}
-
-.energy-number{color:var(--purple);font-size:21px}
-
-.energy-buttons{display:flex;gap:4px}
-
-.energy-btn{
-  width:27px;
-  height:27px;
-  border:0;
-  border-radius:8px;
-  background:#eeeef3;
-  color:#777481;
-  font-size:11px;
-  font-weight:900
-}
-
-.energy-btn.selected{
-  background:var(--purple);
-  color:white
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  margin-bottom:22px
-}
-
-.stat,.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:18px;
-  box-shadow:var(--shadow)
-}
-
-.stat{padding:19px}
-
-.stat-label{
-  color:var(--muted);
-  font-size:12px;
-  font-weight:800
-}
-
-.stat-value{
-  font-size:28px;
-  font-weight:900;
-  margin-top:4px
-}
-
-.recommendation{
-  background:var(--purple-soft);
-  border:1px solid #ddd5ff;
-  padding:20px;
-  border-radius:18px;
-  margin-bottom:28px
-}
-
-.recommendation p{
-  color:#68637b;
-  line-height:1.5;
-  margin:5px 0 0
-}
-
-.section{
-  margin-bottom:30px
-}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px
-}
-
-.primary{
-  border:0;
-  background:var(--purple);
-  color:white;
-  padding:10px 15px;
-  border-radius:10px;
-  font-weight:800
-}
-
-.primary:hover{opacity:.9}
-
-.areas{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px
-}
-
-.area{
-  padding:17px;
-  border-radius:16px;
-  cursor:pointer;
-  transition:.2s
-}
-
-.area:hover{transform:translateY(-2px)}
-
-.area.finance{background:var(--green-soft)}
-.area.business{background:var(--purple-soft)}
-.area.home{background:var(--orange-soft)}
-.area.personal{background:var(--pink-soft)}
-.area.travel{background:var(--blue-soft)}
-
-.area-name{font-weight:900;margin-bottom:12px}
-
-.bar{
-  height:7px;
-  background:rgba(255,255,255,.8);
-  border-radius:20px;
-  overflow:hidden
-}
-
-.bar div{
-  height:100%;
-  background:rgba(0,0,0,.32);
-  border-radius:20px;
-  transition:.3s
-}
-
-.area-info{
-  font-size:11px;
-  color:#66636e;
-  margin-top:8px
-}
-
-.goals{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:14px
-}
-
-.goal{
-  padding:20px
-}
-
-.goal-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px
-}
-
-.badge,.tag{
-  display:inline-block;
-  background:#f0eff4;
-  color:#696674;
-  border-radius:20px;
-  padding:4px 8px;
-  font-size:10px;
-  font-weight:900
-}
-
-.goal-description{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.5;
-  margin:12px 0 15px
-}
-
-.progress{
-  height:8px;
-  background:#ecebf1;
-  border-radius:20px;
-  overflow:hidden
-}
-
-.progress div{
-  height:100%;
-  background:var(--purple);
-  border-radius:20px
-}
-
-.goal-foot{
-  display:flex;
-  justify-content:space-between;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:8px
-}
-
-.tasks{
-  overflow:hidden
-}
-
-.task{
-  display:grid;
-  grid-template-columns:28px 1fr auto;
-  gap:12px;
-  align-items:center;
-  padding:16px 18px;
-  border-bottom:1px solid var(--border)
-}
-
-.task:last-child{border-bottom:0}
-
-.check{
-  width:21px;
-  height:21px;
-  border:2px solid #c9c7d1;
-  border-radius:7px;
-  background:white;
-  display:flex;
-  align-items:center;
-  justify-content:center
-}
-
-.check.done{
-  background:var(--green);
-  border-color:var(--green);
-  color:white
-}
-
-.check.done:after{content:"✓";font-weight:900;font-size:12px}
-
-.task.done .task-name{
-  text-decoration:line-through;
-  color:#aaa7b2
-}
-
-.task-name{font-weight:800}
-
-.meta{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-  margin-top:5px
-}
-
-.fit{
-  color:var(--purple);
-  font-size:10px;
-  font-weight:900
-}
-
-.timer{
-  border:1px solid var(--border);
-  background:white;
-  padding:6px 9px;
-  border-radius:8px;
-  font-size:11px;
-  font-weight:800
-}
-
-.empty{
-  text-align:center;
-  padding:40px;
-  color:var(--muted)
-}
-
-.history-grid{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:5px
-}
-
-.day{
-  aspect-ratio:1;
-  border-radius:7px;
-  background:#eeeef2;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:10px;
-  color:#777481
-}
-
-.day.active{background:var(--purple-soft)}
-.day.good{background:var(--green-soft)}
-
-.insights{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px
-}
-
-.insight{padding:20px}
-
-.insight-number{
-  font-size:27px;
-  font-weight:900;
-  margin:8px 0
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(25,22,35,.5);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:100
-}
-
-.modal.open{display:flex}
-
-.modal-box{
-  background:white;
-  width:100%;
-  max-width:520px;
-  border-radius:20px;
-  padding:24px;
-  max-height:90vh;
-  overflow:auto
-}
-
-.form-group{margin-bottom:15px}
-
-label{
-  display:block;
-  font-size:12px;
-  font-weight:900;
-  margin-bottom:6px
-}
-
-input,select,textarea{
-  width:100%;
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px;
-  outline:none
-}
-
-textarea{min-height:75px;resize:vertical}
-
-input:focus,select:focus,textarea:focus{
-  border-color:var(--purple)
-}
-
-.modal-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:8px;
-  margin-top:20px
-}
-
-.secondary{
-  border:1px solid var(--border);
-  background:white;
-  padding:10px 14px;
-  border-radius:10px;
-  font-weight:700
-}
-
-.page{display:none}
-.page.active{display:block}
-
-@media(max-width:1100px){
-  .areas{grid-template-columns:repeat(3,1fr)}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .insights{grid-template-columns:1fr 1fr}
-}
-
-@media(max-width:750px){
-  .sidebar{
-    position:static;
-    width:100%;
-    padding:12px
-  }
-
-  .app{display:block}
-
-  .logo{padding:5px 8px 10px}
-
-  .nav{
-    width:auto;
-    display:inline-block;
-    padding:9px
-  }
-
-  .main{
-    margin:0;
-    width:100%;
-    padding:20px
-  }
-
-  .top{display:block}
-
-  .energy{
-    margin-top:18px;
-    min-width:0
-  }
-
-  .areas{grid-template-columns:1fr 1fr}
-
-  .task{
-    grid-template-columns:28px 1fr
-  }
-
-  .timer,.fit{
-    grid-column:2
-  }
-}
-
-@media(max-width:480px){
-  .stats{grid-template-columns:1fr 1fr}
-  .areas{grid-template-columns:1fr}
-  .insights{grid-template-columns:1fr}
-}
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<aside class="sidebar">
-
-  <div class="logo">Life<span>Dashboard</span></div>
-
-  <button class="nav active" onclick="showPage('today',this)">🏠 Today</button>
-  <button class="nav" onclick="showPage('goals',this)">🎯 Goals</button>
-  <button class="nav" onclick="showPage('projects',this)">📁 Projects</button>
-  <button class="nav" onclick="showPage('history',this)">📅 History</button>
-  <button class="nav" onclick="showPage('planner',this)">🗓 Planner</button>
-  <button class="nav" onclick="showPage('insights',this)">🧠 Insights</button>
-
-</aside>
-
-<main class="main">
-
-<!-- TODAY -->
-
-<div id="today" class="page active">
-  
-<!-- DATA BACKUP CENTER -->
-
-<div class="section card" style="padding:22px; margin-bottom:24px;">
-
-  <div class="section-head">
-    <div>
-      <h2>Data & Backups</h2>
-      <p class="muted">Keep your personal data safe.</p>
-    </div>
-    <span>☁️</span>
-  </div>
-
-  <p class="muted">
-    Download a copy of your goals, projects, tasks,
-    history and energy settings.
-  </p>
-
-  <div style="display:flex; gap:10px; flex-wrap:wrap;">
-
-    <button class="primary" onclick="downloadBackup()">
-      ↓ Export backup
-    </button>
-
-    <button class="secondary"
-      onclick="document.getElementById('backupFile').click()">
-      ↑ Restore backup
-    </button>
-
-  </div>
-
-  <input
-    type="file"
-    id="backupFile"
-    accept=".json,application/json"
-    onchange="importBackup(event)"
-    style="display:none;"
-  >
-
-  <p class="muted" style="font-size:11px; margin-top:14px;">
-    Your backup is downloaded directly to your device.
-  </p>
-
-</div>
-
-
-  <div class="top">
-
-    <div>
-      <div class="eyebrow">Your life, one step at a time</div>
-      <h1>Good morning, Katia 👋</h1>
-      <div class="date" id="date"></div>
-
-<div id="liveClock" style="
-  font-size:26px;
-  font-weight:900;
-  color:var(--purple);
-  margin-top:8px;
-  font-variant-numeric:tabular-nums;
-">
-  00:00:00
-</div>
-
-<div class="muted" style="font-size:11px;">
-  LOCAL TIME · 24-HOUR FORMAT
-</div>
-    </div>
-
-    <div class="energy">
-
-      <div class="energy-head">
-        <span>⚡ Today's energy</span>
-        <span class="energy-number">
-          <span id="energy">5</span>/10
-        </span>
-      </div>
-
-      <div class="energy-buttons" id="energyButtons"></div>
-
-    </div>
-
-  </div>
-
-  <div class="stats">
-
-    <div class="stat">
-      <div class="stat-label">ACTIVE GOALS</div>
-      <div class="stat-value" id="goalStat">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">TODAY'S ACTIONS</div>
-      <div class="stat-value" id="taskStat">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">COMPLETED</div>
-      <div class="stat-value" id="completeStat">0</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-label">TODAY'S PROGRESS</div>
-      <div class="stat-value" id="progressStat">0%</div>
-    </div>
-
-  </div>
-
-  <div class="recommendation">
-    <strong>🧠 Today's recommendations</strong>
-    <p id="recommendation"></p>
-  </div>
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Your life areas</h2>
-      <button class="primary" onclick="openGoal()">＋ Add goal</button>
-    </div>
-
-    <div class="areas">
-
-      <div class="area finance">
-        <div class="area-name">💰 Finance</div>
-        <div class="bar"><div id="financeBar"></div></div>
-        <div class="area-info" id="financeInfo"></div>
-      </div>
-
-      <div class="area business">
-        <div class="area-name">💼 Business</div>
-        <div class="bar"><div id="businessBar"></div></div>
-        <div class="area-info" id="businessInfo"></div>
-      </div>
-
-      <div class="area home">
-        <div class="area-name">🏠 Home</div>
-        <div class="bar"><div id="homeBar"></div></div>
-        <div class="area-info" id="homeInfo"></div>
-      </div>
-
-      <div class="area personal">
-        <div class="area-name">🌱 Personal</div>
-        <div class="bar"><div id="personalBar"></div></div>
-        <div class="area-info" id="personalInfo"></div>
-      </div>
-
-      <div class="area travel">
-        <div class="area-name">✈️ Travel</div>
-        <div class="bar"><div id="travelBar"></div></div>
-        <div class="area-info" id="travelInfo"></div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Your goals</h2>
-    </div>
-
-    <div class="goals" id="goalList"></div>
-
-  </div>
-
-  <div class="section">
-
-    <div class="section-head">
-      <h2>Today's best next actions</h2>
-      <button class="primary" onclick="openTask()">＋ Add action</button>
-    </div>
-
-    <div class="card tasks" id="taskList"></div>
-
-  </div>
-
-</div>
-
-
-<!-- GOALS PAGE -->
-
-<div id="goals" class="page">
-
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">Big picture</div>
-      <h1>Goals</h1>
-    </div>
-    <button class="primary" onclick="openGoal()">＋ Add goal</button>
-  </div>
-
-  <div class="goals" id="allGoals"></div>
-
-</div>
-
-
-<!-- PROJECTS PAGE -->
-
-<div id="projects" class="page">
-
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">Break goals into pieces</div>
-      <h1>Projects</h1>
-    </div>
-    <button class="primary" onclick="openProject()">＋ Add project</button>
-  </div>
-
-  <div class="goals" id="projectList"></div>
-
-</div>
-
-
-<!-- DAILY PLANNER -->
-
-<div id="planner" class="page">
-
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">Make room for what matters</div>
-      <h1>Daily Planner</h1>
-      <p class="muted">Your day, at your pace.</p>
-    </div>
-    <button class="primary" onclick="openSchedule()">
-      + Add event
-    </button>
-  </div>
-
-  <div class="card" style="padding:20px;margin-bottom:20px;">
-
-    <div class="form-group">
-      <label>SELECT DATE</label>
-      <input type="date" id="plannerDate"
-        onchange="renderPlanner()">
-    </div>
-
-    <div id="plannerSummary" class="muted">
-      Your schedule will appear here.
-    </div>
-
-  </div>
-
-  <div class="card" id="scheduleList">
-    <div class="empty">
-      Your day is waiting to be planned. 🌷
-    </div>
-  </div>
-
-</div>
-
-<!-- HISTORY -->
-
-<div id="history" class="page">
-
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">Look back</div>
-      <h1>History</h1>
-    </div>
-  </div>
-
-  <div class="card goal" style="margin-bottom:18px">
-
-    <h3>Activity calendar</h3>
-
-    <p class="muted">
-      Your activity grows here as you complete actions.
-    </p>
-
-    <div class="history-grid" id="historyGrid"></div>
-
-  </div>
-
-  <div class="insights">
-
-    <div class="card insight">
-      <div class="muted">TOTAL ACTIONS</div>
-      <div class="insight-number" id="historyTasks">0</div>
-      <div class="muted">created</div>
-    </div>
-
-    <div class="card insight">
-      <div class="muted">COMPLETED</div>
-      <div class="insight-number" id="historyCompleted">0</div>
-      <div class="muted">actions</div>
-    </div>
-
-    <div class="card insight">
-      <div class="muted">TIME INVESTED</div>
-      <div class="insight-number" id="historyTime">0m</div>
-      <div class="muted">estimated time</div>
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- INSIGHTS -->
-
-<div id="insights" class="page">
-
-  <div class="section-head">
-    <div>
-      <div class="eyebrow">Patterns, not judgment</div>
-      <h1>Insights</h1>
-    </div>
-  </div>
-
-  <div class="insights">
-
-    <div class="card insight">
-      <div class="muted">BEST ENERGY</div>
-      <div class="insight-number" id="bestEnergy">—</div>
-      <div class="muted">based on completed actions</div>
-    </div>
-
-    <div class="card insight">
-      <div class="muted">COMPLETION RATE</div>
-      <div class="insight-number" id="completionRate">0%</div>
-      <div class="muted">all actions</div>
-    </div>
-
-    <div class="card insight">
-      <div class="muted">AVERAGE TASK</div>
-      <div class="insight-number" id="averageTask">0m</div>
-      <div class="muted">estimated duration</div>
-    </div>
-
-  </div>
-
-  <div class="recommendation" style="margin-top:18px">
-
-    <strong>🔮 Early prediction</strong>
-
-    <p id="prediction"></p>
-
-  </div>
-
-</div>
-
-</main>
-</div>
-
-
-<!-- GOAL MODAL -->
-
-<div class="modal" id="goalModal">
-
-  <div class="modal-box">
-
-    <h2>Create a goal</h2>
-
-    <p class="muted">
-      What would make your life meaningfully better?
-    </p>
-
-    <div class="form-group">
-      <label>GOAL</label>
-      <input id="goalName" placeholder="Become debt free">
-    </div>
-
-    <div class="form-group">
-      <label>LIFE AREA</label>
-
-      <select id="goalArea">
-        <option value="finance">💰 Finance</option>
-        <option value="business">💼 Business</option>
-        <option value="home">🏠 Home</option>
-        <option value="personal">🌱 Personal</option>
-        <option value="travel">✈️ Travel</option>
-      </select>
-
-    </div>
-
-    <div class="form-group">
-      <label>WHY DOES THIS MATTER?</label>
-      <textarea id="goalDescription" placeholder="Describe what success looks like..."></textarea>
-    </div>
-
-    <div class="modal-actions">
-      <button class="secondary" onclick="closeModals()">Cancel</button>
-      <button class="primary" onclick="addGoal()">Create goal</button>
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- PROJECT MODAL -->
-
-<div class="modal" id="projectModal">
-
-  <div class="modal-box">
-
-    <h2>Create a project</h2>
-
-    <p class="muted">
-      A project is a collection of actions that moves a goal forward.
-    </p>
-
-    <div class="form-group">
-      <label>PROJECT</label>
-      <input id="projectName" placeholder="Credit card payoff">
-    </div>
-
-    <div class="form-group">
-      <label>GOAL</label>
-      <select id="projectGoal"></select>
-    </div>
-
-    <div class="modal-actions">
-      <button class="secondary" onclick="closeModals()">Cancel</button>
-      <button class="primary" onclick="addProject()">Create project</button>
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- TASK MODAL -->
-
-<div class="modal" id="taskModal">
-
-  <div class="modal-box">
-
-    <h2>Add a daily action</h2>
-
-    <p class="muted">
-      Keep it concrete. If it takes several steps, make it a project.
-    </p>
-
-    <div class="form-group">
-      <label>ACTION</label>
-      <input id="taskName" placeholder="Review my credit card balance">
-    </div>
-
-    <div class="form-group">
-      <label>GOAL</label>
-      <select id="taskGoal"></select>
-    </div>
-
-    <div class="form-group">
-      <label>ESTIMATED TIME</label>
-
-      <select id="taskDuration">
-        <option value="5">5 minutes</option>
-        <option value="10">10 minutes</option>
-        <option value="15">15 minutes</option>
-        <option value="20">20 minutes</option>
-        <option value="30">30 minutes</option>
-        <option value="45">45 minutes</option>
-        <option value="60">1 hour</option>
-        <option value="90">1.5 hours</option>
-        <option value="120">2 hours</option>
-      </select>
-
-    </div>
-
-    <div class="form-group">
-      <label>ENERGY REQUIRED</label>
-<div class="form-group">
-  <label>PRIORITY</label>
-  <select id="taskPriority">
-    <option value="low">🟢 Low</option>
-    <option value="medium" selected>🟡 Medium</option>
-    <option value="high">🔴 High</option>
-  </select>
-</div>
-
-<div class="form-group">
-  <label>DUE DATE</label>
-  <input type="date" id="taskDueDate">
-</div>
-      <select id="taskDifficulty">
-        <option value="1">🟢 Low</option>
-        <option value="2">🟡 Medium</option>
-        <option value="3">🔴 High</option>
-      </select>
-
-    </div>
-
-    <div class="modal-actions">
-      <button class="secondary" onclick="closeModals()">Cancel</button>
-      <button class="primary" onclick="addTask()">Add action</button>
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- SCHEDULE MODAL -->
-
-<div class="modal" id="scheduleModal">
-
-  <div class="modal-box">
-
-    <h2>Add to your day</h2>
-
-    <p class="muted">
-      Give your time a purpose.
-    </p>
-
-    <div class="form-group">
-      <label>ACTIVITY</label>
-      <input id="scheduleName"
-        placeholder="Morning routine">
-    </div>
-
-    <div class="form-group">
-      <label>DATE</label>
-      <input type="date" id="scheduleDate">
-    </div>
-
-    <div class="form-group">
-      <label>START TIME (24-HOUR)</label>
-      <input type="time" id="scheduleStart">
-    </div>
-
-    <div class="form-group">
-      <label>END TIME (24-HOUR)</label>
-      <input type="time" id="scheduleEnd">
-    </div>
-
-    <div class="form-group">
-      <label>LIFE AREA</label>
-      <select id="scheduleArea">
-        <option value="personal">🌱 Personal</option>
-        <option value="business">💼 Business</option>
-        <option value="home">🏠 Home</option>
-        <option value="finance">💰 Finance</option>
-        <option value="travel">✈️ Travel</option>
-      </select>
-    </div>
-
-    <div class="modal-actions">
-      <button class="secondary"
-        onclick="closeModals()">Cancel</button>
-
-      <button class="primary"
-        onclick="addSchedule()">Save event</button>
-    </div>
-
-  </div>
-
-</div>
-
-<script>
-
-/* ================================
-   STORAGE
-================================ */
-
-const GOALS_KEY = "lifeDashboardGoalsV3";
-const TASKS_KEY = "lifeDashboardTasksV3";
-const PROJECTS_KEY = "lifeDashboardProjectsV3";
-const HISTORY_KEY = "lifeDashboardHistoryV3";
-const ENERGY_KEY = "lifeDashboardEnergyV3";
-
-
-let goals = JSON.parse(localStorage.getItem(GOALS_KEY)) || [
-
-  {
-    id:1,
-    name:"Become financially stronger",
-    area:"finance",
-    description:"Build more control, clarity and confidence around money.",
-    progress:15
-  },
-
-  {
-    id:2,
-    name:"Grow my business",
-    area:"business",
-    description:"Turn ideas into consistent business progress.",
-    progress:10
-  },
-
-  {
-    id:3,
-    name:"Create a peaceful home",
-    area:"home",
-    description:"Make home easier, calmer and more enjoyable.",
-    progress:20
-  },
-
-  {
-    id:4,
-    name:"Plan my next adventure",
-    area:"travel",
-    description:"Turn a future trip into a real plan.",
-    progress:5
-  }
-
-];
-
-
-let projects = JSON.parse(localStorage.getItem(PROJECTS_KEY)) || [
-
-  {
-    id:1,
-    name:"Financial reset",
-    goalId:1
-  },
-
-  {
-    id:2,
-    name:"Business foundation",
-    goalId:2
-  }
-
-];
-
-
-let tasks = JSON.parse(localStorage.getItem(TASKS_KEY)) || [
-
-  {
-    id:1,
-    name:"Review this week's spending",
-    goalId:1,
-    duration:20,
-    difficulty:1,
-    completed:false,
-    date:todayKey(),
-    elapsed:0
-  },
-
-  {
-    id:2,
-    name:"Work on one important business task",
-    goalId:2,
-    duration:45,
-    difficulty:3,
-    completed:false,
-    date:todayKey(),
-    elapsed:0
-  },
-
-  {
-    id:3,
-    name:"Clear one small area of the kitchen",
-    goalId:3,
-    duration:15,
-    difficulty:1,
-    completed:false,
-    date:todayKey(),
-    elapsed:0
-  },
-
-  {
-    id:4,
-    name:"Research one possible destination",
-    goalId:4,
-    duration:15,
-    difficulty:1,
-    completed:false,
-    date:todayKey(),
-    elapsed:0
-  }
-
-];
-
-
-let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || {};
-
-let energy =
-  Number(localStorage.getItem(ENERGY_KEY)) || 5;
-
-
-/* ================================
-   DAILY PLANNER
-================================ */
-
-const SCHEDULE_KEY = "lifeDashboardScheduleV1";
-
-let schedule = loadData(SCHEDULE_KEY, []);
-
-function saveSchedule() {
-  localStorage.setItem(
-    SCHEDULE_KEY,
-    JSON.stringify(schedule)
-  );
-}
-
-function openSchedule() {
-
-  document.getElementById("scheduleName").value = "";
-
-  document.getElementById("scheduleDate").value =
-    document.getElementById("plannerDate").value ||
-    todayKey();
-
-  document.getElementById("scheduleStart").value = "09:00";
-  document.getElementById("scheduleEnd").value = "10:00";
-
-  document.getElementById("scheduleModal")
-    .classList.add("open");
-
-}
-
-function addSchedule() {
-
-  const name = document.getElementById("scheduleName")
-    .value.trim();
-
-  const date = document.getElementById("scheduleDate")
-    .value;
-
-  const start = document.getElementById("scheduleStart")
-    .value;
-
-  const end = document.getElementById("scheduleEnd")
-    .value;
-
-  const area = document.getElementById("scheduleArea")
-    .value;
-
-  if (!name || !date || !start || !end) {
-    alert("Please complete all event details.");
-    return;
-  }
-
-  if (end <= start) {
-    alert("End time must be later than start time.");
-    return;
-  }
-
-// Check for overlapping events on the same day.
-
-const conflict = schedule.some(event =>
-  event.date === date &&
-  start < event.end &&
-  end > event.start
-);
-
-if (conflict) {
-  alert(
-    "This time overlaps with another scheduled event. Please choose another time."
-  );
-  return;
-}
-
-  schedule.push({
-    id: Date.now(),
-    name,
-    date,
-    start,
-    end,
-    area
-  });
-
-  saveSchedule();
-  closeModals();
-
-  document.getElementById("plannerDate").value = date;
-
-  renderPlanner();
-
-}
-
-function renderPlanner() {
-
-  const dateInput = document.getElementById("plannerDate");
-
-  if (!dateInput) return;
-
-  const date = dateInput.value || todayKey();
-
-  const events = schedule
-    .filter(event => event.date === date)
-    .sort((a,b) => a.start.localeCompare(b.start));
-
-  const container = document.getElementById("scheduleList");
-
-  document.getElementById("plannerSummary").textContent =
-    `${events.length} scheduled ${events.length === 1 ? "event" : "events"} · ${date}`;
-
-  if (!events.length) {
-
-    container.innerHTML =
-      `<div class="empty">
-        Nothing scheduled yet. Make some room for yourself. 🌷
-      </div>`;
-
-    return;
-
-  }
-
-  container.innerHTML = events.map(event => `
-
-    <div class="task">
-
-      <div style="font-size:12px;font-weight:900;color:var(--purple);">
-        ${escapeHTML(event.start)}
-      </div>
-
-      <div>
-        <div class="task-name">
-          ${escapeHTML(event.name)}
-        </div>
-
-        <div class="meta">
-          <span class="tag">
-            ${areaName(event.area)}
-          </span>
-          <span class="tag">
-            ${escapeHTML(event.start)}–${escapeHTML(event.end)}
-          </span>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:5px;">
-  <button class="timer"
-    onclick="editSchedule(${event.id})">
-    ✏️
-  </button>
-
-  <button class="timer"
-    onclick="deleteSchedule(${event.id})">
-    ✕
-  </button>
-</div>
-
-
-
-  `).join("");
-
-}
-
-function editSchedule(id) {
-
-  const event = schedule.find(e => e.id === id);
-
-  if (!event) return;
-
-  const name = prompt("Activity name:", event.name);
-  if (name === null) return;
-
-  if (!name.trim()) {
-    alert("Activity name cannot be empty.");
-    return;
-  }
-
-  const start = prompt("Start time (HH:MM):", event.start);
-  if (start === null) return;
-
-  const end = prompt("End time (HH:MM):", event.end);
-  if (end === null) return;
-
-  const date = prompt("Date (YYYY-MM-DD):", event.date);
-  if (date === null) return;
-
-  if (
-    !/^\d{2}:\d{2}$/.test(start) ||
-    !/^\d{2}:\d{2}$/.test(end) ||
-    !/^(\d{4})-(\d{2})-(\d{2})$/.test(date)
-  ) {
-    alert("Please check your date and time format.");
-    return;
-  }
-
-  if (start >= end) {
-    alert("End time must be later than start time.");
-    return;
-  }
-
-  const conflict = schedule.some(e =>
-    e.id !== id &&
-    e.date === date &&
-    start < e.end &&
-    end > e.start
-  );
-
-  if (conflict) {
-    alert("This overlaps with another event.");
-    return;
-  }
-
-  event.name = name.trim();
-  event.start = start;
-  event.end = end;
-  event.date = date;
-
-  saveSchedule();
-  renderPlanner();
-
-}
-
-function deleteSchedule(id) {
-
-  if (!confirm("Delete this scheduled event?")) return;
-
-  schedule = schedule.filter(event => event.id !== id);
-
-  saveSchedule();
-  renderPlanner();
-
-}
-
-/* ================================
-   HELPERS
-================================ */
-
-
-function todayKey(){
-
-  const date = new Date();
-
-  const year = date.getFullYear();
-
-  const month = String(
-    date.getMonth() + 1
-  ).padStart(2, "0");
-
-  const day = String(
-    date.getDate()
-  ).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-
-}
-
-
-/* SAFE STORAGE READER */
-
-function loadData(key, fallback) {
-
-  try {
-
-    const stored = localStorage.getItem(key);
-
-    if (stored === null) {
-      return fallback;
-    }
-
-    return JSON.parse(stored);
-
-  } catch (error) {
-
-    console.warn("Could not load:", key);
-
-    return fallback;
-
-  }
-
-
-function save(){
-
-  try {
-
-    localStorage.setItem(
-      GOALS_KEY,
-      JSON.stringify(goals)
-    );
-
-    localStorage.setItem(
-      PROJECTS_KEY,
-      JSON.stringify(projects)
-    );
-
-    localStorage.setItem(
-      TASKS_KEY,
-      JSON.stringify(tasks)
-    );
-
-    localStorage.setItem(
-      HISTORY_KEY,
-      JSON.stringify(history)
-    );
-
-    localStorage.setItem(
-      ENERGY_KEY,
-      String(energy)
-    );
-
-  } catch(error) {
-
-    console.error("Saving failed:", error);
-
-    alert(
-      "Your dashboard could not save its data. Please export a backup and check your browser storage."
-    );
-
-  }
-
-
-
-function escapeHTML(value){
-
-  const div =
-    document.createElement("div");
-
-  div.textContent = value;
-
-  return div.innerHTML;
-
-}
-
-
-function areaName(area){
-
-  const names = {
-
-    finance:"💰 Finance",
-    business:"💼 Business",
-    home:"🏠 Home",
-    personal:"🌱 Personal",
-    travel:"✈️ Travel"
-
-  };
-
-  return names[area] || area;
-
-}
-
-
-/* ================================
-   DATE
-================================ */
-
-
-function renderDate(){
-
-  document.getElementById("date").textContent =
-    new Date().toLocaleDateString(
-      "en-US",
-      {
-        weekday:"long",
-        month:"long",
-        day:"numeric",
-        year:"numeric"
-      }
-    );
-
-}
-
-function updateClock(){
-
-  const now = new Date();
-
-  document.getElementById("liveClock").textContent =
-    now.toLocaleTimeString("en-GB", {
-      hour:"2-digit",
-      minute:"2-digit",
-      second:"2-digit",
-      hour12:false
-    });
-
-}
-
-    );
-
-}
-
-
-/* ================================
-   ENERGY
-================================ */
-
-function renderEnergy(){
-
-  const box =
-    document.getElementById(
-      "energyButtons"
-    );
-
-  box.innerHTML = "";
-
-  for(let i=1;i<=10;i++){
-
-    const button =
-      document.createElement("button");
-
-    button.className =
-      "energy-btn" +
-      (i===energy ? " selected" : "");
-
-    button.textContent = i;
-
-    button.onclick = () => {
-
-      energy = i;
-
-      save();
-
-      renderPlanner();
-      function render(){
-
-}
-
-    };
-
-    box.appendChild(button);
-
-  }
-
-  document.getElementById(
-    "energy"
-  ).textContent = energy;
-
-}
-
-
-/* ================================
-   GOALS
-================================ */
-
-function renderGoals(){
-
-  const html =
-    goals.map(goal => {
-
-      const goalTasks =
-        tasks.filter(
-          task =>
-            task.goalId === goal.id
-        );
-
-      const completed =
-        goalTasks.filter(
-          task => task.completed
-        ).length;
-
-      let progress =
-        goal.progress || 0;
-
-      if(goalTasks.length){
-
-        progress =
-          Math.max(
-            progress,
-            Math.round(
-              completed /
-              goalTasks.length *
-              100
-            )
-          );
-
-      }
-
-      return `
-
-        <div class="card goal">
-
-          <div class="goal-top">
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Life Dashboard</title>
+    <meta
+      name="description"
+      content="A personal dashboard for goals, projects, energy, tasks, and planning."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="Sidebar navigation">
+        <div class="logo">Life<span>Dashboard</span></div>
+
+        <nav class="nav-list" aria-label="Main navigation">
+          <button class="nav active" data-page="today" type="button">🏠 Today</button>
+          <button class="nav" data-page="goals" type="button">🎯 Goals</button>
+          <button class="nav" data-page="projects" type="button">📁 Projects</button>
+          <button class="nav" data-page="history" type="button">📅 History</button>
+          <button class="nav" data-page="planner" type="button">🗓 Planner</button>
+          <button class="nav" data-page="insights" type="button">🧠 Insights</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <section id="today" class="page active" aria-label="Today dashboard">
+          <div class="backup-box">
+            <div class="section-head">
+              <div>
+                <h2>Data &amp; Backups</h2>
+                <p class="muted">Keep your personal data safe.</p>
+              </div>
+              <span aria-hidden="true">☁️</span>
+            </div>
+
+            <p class="muted">
+              Download a copy of your goals, projects, tasks, history, and energy settings.
+            </p>
+
+            <div class="backup-actions">
+              <button class="primary" id="exportBackupBtn" type="button">↓ Export backup</button>
+              <button class="secondary" id="restoreBackupBtn" type="button">↑ Restore backup</button>
+              <input id="backupFile" type="file" accept=".json,application/json" hidden />
+            </div>
+
+            <p class="backup-note">Your backup is downloaded directly to your device.</p>
+          </div>
+
+          <div class="top">
             <div>
-              <h3>
-                ${escapeHTML(goal.name)}
-              </h3>
-
-              <span class="badge">
-                ${areaName(goal.area)}
-              </span>
+              <div class="eyebrow">Your life, one step at a time</div>
+              <h1>Good morning, Katia 👋</h1>
+              <div id="date" class="date"></div>
+              <div id="liveClock" class="dashboard-clock">00:00:00</div>
+              <div class="muted" style="font-size: 11px;">LOCAL TIME · 24-HOUR FORMAT</div>
             </div>
 
+            <div class="energy">
+              <div class="energy-head">
+                <span>⚡ Today's energy</span>
+                <span class="energy-number"><span id="energyValue">5</span>/10</span>
+              </div>
+              <div id="energyButtons" class="energy-buttons" aria-label="Select today's energy"></div>
+            </div>
           </div>
 
-          <div class="goal-description">
-            ${escapeHTML(
-              goal.description ||
-              "A goal worth moving toward."
-            )}
-          </div>
-
-          <div class="progress">
-            <div style="width:${progress}%"></div>
-          </div>
-
-          <div class="goal-foot">
-
-            <span>${progress}% progress</span>
-
-            <span>
-              ${completed}/${goalTasks.length}
-              actions
-            </span>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }).join("");
-
-
-  document.getElementById(
-    "goalList"
-  ).innerHTML =
-    html ||
-    `<div class="empty">
-      No goals yet. Start with one thing that matters.
-    </div>`;
-
-
-  document.getElementById(
-    "allGoals"
-  ).innerHTML =
-    html ||
-    `<div class="empty">
-      No goals yet.
-    </div>`;
-
-}
-
-
-/* ================================
-   TASKS
-================================ */
-
-function renderTasks(){
-
-  const incomplete =
-    tasks.filter(
-      task => !task.completed
-    );
-
-  const completed =
-    tasks.filter(
-      task => task.completed
-    );
-
-
-  incomplete.sort(
-    (a,b) => {const priorityRank = {
-  high: 3,
-  medium: 2,
-  low: 1
-};
-
-const priorityDifference =
-  (priorityRank[b.priority] || 2) -
-  (priorityRank[a.priority] || 2);
-
-if (priorityDifference !== 0) {
-  return priorityDifference;
-}
-
-      const aFit =
-        a.difficulty <=
-        Math.ceil(energy/3);
-
-      const bFit =
-        b.difficulty <=
-        Math.ceil(energy/3);
-
-      if(aFit !== bFit)
-        return bFit-aFit;
-
-      if(a.difficulty !== b.difficulty)
-        return a.difficulty-b.difficulty;
-
-      return a.duration-b.duration;
-
-    }
-  );
-
-
-  const sorted =
-    [...incomplete,...completed];
-
-
-  const container =
-    document.getElementById(
-      "taskList"
-    );
-
-
-  if(!sorted.length){
-
-    container.innerHTML =
-      `<div class="empty">
-        Nothing here. 🌱
-      </div>`;
-
-    return;
-
-  }
-
-
-  container.innerHTML =
-    sorted.map(task => {
-
-      const goal =
-        goals.find(
-          g => g.id === task.goalId
-        );
-
-
-      const fits =
-        task.difficulty <=
-        Math.ceil(energy/3);
-
-
-      return `
-
-        <div class="task ${task.completed ? "done" : ""}">
-
-          <div
-            class="check ${task.completed ? "done" : ""}"
-            onclick="toggleTask(${task.id})">
-          </div>
-
-<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
-
-  ${!task.completed ? `
-    <button class="timer"
-      onclick="startTimer(${task.id})">
-      ▶ Start
-    </button>
-  ` : ""}
-
-  <button class="timer"
-    onclick="editTask(${task.id})">
-    ✏️ Edit
-  </button>
-
-  <button class="timer"
-    onclick="deleteTask(${task.id})"
-    style="color:#c46b82;">
-    🗑 Delete
-  </button>
-
-</div>
-
-          <div>
-
-          
-            <div class="meta">
-<span class="tag">
-  ${
-    task.priority === "high" ? "🔴 High" :
-    task.priority === "medium" ? "🟡 Medium" :
-    "🟢 Low"
-  } priority
-</span>
-
-${
-  task.dueDate
-  ? `<span class="tag" style="color:${
-      task.dueDate < todayKey() ? "#c45b72" : "#696674"
-    }">
-      📅 ${
-        task.dueDate < todayKey()
-        ? "OVERDUE · "
-        : ""
-      }${task.dueDate}
-    </span>`
-  : ""
-}
-              <span class="tag">
-                ${goal ? areaName(goal.area) : "Unassigned"}
-              </span>
-
-              ${
-                goal
-                ? `<span class="tag">
-                    🎯 ${escapeHTML(goal.name)}
-                   </span>`
-                : ""
-              }
-
-              <span class="tag">
-                ⏱ ${task.duration}m
-              </span>
-
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">ACTIVE GOALS</div>
+              <div id="goalStat" class="stat-value">0</div>
             </div>
 
+            <div class="stat">
+              <div class="stat-label">TODAY'S ACTIONS</div>
+              <div id="taskStat" class="stat-value">0</div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-label">COMPLETED</div>
+              <div id="completeStat" class="stat-value">0</div>
+            </div>
+
+            <div class="stat">
+              <div class="stat-label">TODAY'S PROGRESS</div>
+              <div id="progressStat" class="stat-value">0%</div>
+            </div>
           </div>
 
-          <div>
-
-            ${
-              !task.completed && fits
-              ? `<div class="fit">GOOD FIT</div>`
-              : ""
-            }
-
-            ${
-              !task.completed
-             
-              : ""
-            }
-
+          <div class="recommendation">
+            <strong>🧠 Today's recommendations</strong>
+            <p id="recommendationText"></p>
           </div>
 
+          <div class="section">
+            <div class="section-head">
+              <h2>Your life areas</h2>
+              <button class="primary" id="addGoalFromAreasBtn" type="button">＋ Add goal</button>
+            </div>
+            <div id="areasList" class="areas"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2>Your goals</h2>
+            </div>
+            <div id="goalList" class="goals"></div>
+          </div>
+
+          <div class="section">
+            <div class="section-head">
+              <h2>Today's best next actions</h2>
+              <button class="primary" id="addTaskBtn" type="button">＋ Add action</button>
+            </div>
+            <div id="taskList" class="card tasks"></div>
+          </div>
+        </section>
+
+        <section id="goals" class="page" aria-label="Goals page">
+          <div class="page-title-row">
+            <div>
+              <div class="eyebrow">Big picture</div>
+              <h1>Goals</h1>
+            </div>
+            <button class="primary" id="addGoalBtn" type="button">＋ Add goal</button>
+          </div>
+          <div id="allGoals" class="goals"></div>
+        </section>
+
+        <section id="projects" class="page" aria-label="Projects page">
+          <div class="page-title-row">
+            <div>
+              <div class="eyebrow">Break goals into pieces</div>
+              <h1>Projects</h1>
+            </div>
+            <button class="primary" id="addProjectBtn" type="button">＋ Add project</button>
+          </div>
+          <div id="projectList" class="projects"></div>
+        </section>
+
+        <section id="planner" class="page" aria-label="Planner page">
+          <div class="page-title-row">
+            <div>
+              <div class="eyebrow">Make room for what matters</div>
+              <h1>Daily Planner</h1>
+              <p class="muted">Your day, at your pace.</p>
+            </div>
+            <button class="primary" id="addEventBtn" type="button">＋ Add event</button>
+          </div>
+
+          <div class="planner-date-box">
+            <div class="form-group">
+              <label for="plannerDate">SELECT DATE</label>
+              <input id="plannerDate" type="date" />
+            </div>
+            <div id="plannerSummary" class="muted">Your schedule will appear here.</div>
+          </div>
+
+          <div id="scheduleList" class="card schedule-list">
+            <div class="empty">Your day is waiting to be planned. 🌷</div>
+          </div>
+        </section>
+
+        <section id="history" class="page" aria-label="History page">
+          <div class="page-title-row">
+            <div>
+              <div class="eyebrow">Look back</div>
+              <h1>History</h1>
+            </div>
+          </div>
+
+          <div class="card goal-card" style="margin-bottom: 18px;">
+            <h3>Activity calendar</h3>
+            <p class="muted" style="margin-top: 6px;">Your activity grows here as you complete actions.</p>
+            <div id="historyGrid" class="history-grid" style="margin-top: 12px;"></div>
+          </div>
+
+          <div class="insights">
+            <div class="card insight-card">
+              <div class="muted">TOTAL ACTIONS</div>
+              <div id="historyTasks" class="insight-number">0</div>
+              <div class="muted">created</div>
+            </div>
+
+            <div class="card insight-card">
+              <div class="muted">COMPLETED</div>
+              <div id="historyCompleted" class="insight-number">0</div>
+              <div class="muted">actions</div>
+            </div>
+
+            <div class="card insight-card">
+              <div class="muted">TIME INVESTED</div>
+              <div id="historyTime" class="insight-number">0m</div>
+              <div class="muted">estimated time</div>
+            </div>
+          </div>
+        </section>
+
+        <section id="insights" class="page" aria-label="Insights page">
+          <div class="page-title-row">
+            <div>
+              <div class="eyebrow">Patterns, not judgment</div>
+              <h1>Insights</h1>
+            </div>
+          </div>
+
+          <div class="insights">
+            <div class="card insight-card">
+              <div class="muted">BEST ENERGY</div>
+              <div id="bestEnergy" class="insight-number">—</div>
+              <div class="muted">based on completed actions</div>
+            </div>
+
+            <div class="card insight-card">
+              <div class="muted">COMPLETION RATE</div>
+              <div id="completionRate" class="insight-number">0%</div>
+              <div class="muted">all actions</div>
+            </div>
+
+            <div class="card insight-card">
+              <div class="muted">AVERAGE TASK</div>
+              <div id="averageTask" class="insight-number">0m</div>
+              <div class="muted">estimated duration</div>
+            </div>
+          </div>
+
+          <div class="recommendation" style="margin-top: 18px;">
+            <strong>🔮 Early prediction</strong>
+            <p id="predictionText"></p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="goalModal" class="modal" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="goalModalTitle">
+        <div class="modal-header">
+          <h2 id="goalModalTitle">Create a goal</h2>
+          <p class="muted">What would make your life meaningfully better?</p>
         </div>
 
-      `;
-
-    }).join("");
-
-}
-
-
-/* ================================
-   STATS
-================================ */
-
-function renderStats(){
-
-  const completed =
-    tasks.filter(
-      task => task.completed
-    ).length;
-
-  const progress =
-    tasks.length
-    ? Math.round(
-        completed /
-        tasks.length *
-        100
-      )
-    : 0;
-
-
-  document.getElementById(
-    "goalStat"
-  ).textContent =
-    goals.length;
-
-
-  document.getElementById(
-    "taskStat"
-  ).textContent =
-    tasks.length;
-
-
-  document.getElementById(
-    "completeStat"
-  ).textContent =
-    completed;
-
-
-  document.getElementById(
-    "progressStat"
-  ).textContent =
-    progress + "%";
-
-
-  const areas = [
-    "finance",
-    "business",
-    "home",
-    "personal",
-    "travel"
-  ];
-
-
-  areas.forEach(area => {
-
-    const areaGoals =
-      goals.filter(
-        goal =>
-          goal.area === area
-      );
-
-
-    const average =
-      areaGoals.length
-      ? Math.round(
-          areaGoals.reduce(
-            (sum,g) =>
-              sum +
-              (g.progress || 0),
-            0
-          ) /
-          areaGoals.length
-        )
-      : 0;
-
-
-    document.getElementById(
-      area+"Bar"
-    ).style.width =
-      average+"%";
-
-
-    document.getElementById(
-      area+"Info"
-    ).textContent =
-      `${areaGoals.length} ${
-        areaGoals.length===1
-        ? "goal"
-        : "goals"
-      } · ${average}% average`;
-
-  });
-
-}
-
-
-/* ================================
-   RECOMMENDATION
-================================ */
-
-function renderRecommendation(){
-
-  const incomplete =
-    tasks.filter(
-      task => !task.completed
-    );
-
-
-  let message;
-
-
-  if(!incomplete.length){
-
-    message =
-      "✨ Everything on your current list is complete. You don't need to create more work just to feel productive.";
-
-  }
-
-  else if(energy <= 2){
-
-    message =
-      "Your capacity is low today. Protect your momentum. Pick one tiny action and let that be enough.";
-
-  }
-
-  else if(energy <= 4){
-
-    message =
-      "This is a lower-capacity day. Start with a quick win, then reassess. Small progress is still progress.";
-
-  }
-
-  else if(energy <= 7){
-
-    message =
-      "You have moderate capacity. I'd choose one easy win and one meaningful action rather than trying to conquer everything.";
-
-  }
-
-  else{
-
-    message =
-      "You've got high capacity today. This is a good opportunity for deeper work, especially on something you've been avoiding.";
-
-  }
-
-
-  document.getElementById(
-    "recommendation"
-  ).textContent =
-    message;
-
-}
-
-
-/* ================================
-   AREA STATS
-================================ */
-
-function renderHistory(){
-
-  const grid =
-    document.getElementById(
-      "historyGrid"
-    );
-
-  grid.innerHTML = "";
-
-
-  for(let i=29;i>=0;i--){
-
-    const date =
-      new Date();
-
-    date.setDate(
-      date.getDate()-i
-    );
-
-
-    const key =
-      date.toISOString().slice(0,10);
-
-
-    const day =
-      document.createElement("div");
-
-    day.className =
-      "day";
-
-
-    if(history[key]){
-
-      day.classList.add(
-        history[key] >= 3
-          ? "good"
-          : "active"
-      );
-
-    }
-
-
-    day.title =
-      `${key}: ${
-        history[key] || 0
-      } completed`;
-
-
-    day.textContent =
-      date.getDate();
-
-
-    grid.appendChild(day);
-
-  }
-
-
-  const completed =
-    tasks.filter(
-      task => task.completed
-    ).length;
-
-
-  const minutes =
-    tasks
-      .filter(task => task.completed)
-      .reduce(
-        (sum,task) =>
-          sum + task.duration,
-        0
-      );
-
-
-  document.getElementById(
-    "historyTasks"
-  ).textContent =
-    tasks.length;
-
-
-  document.getElementById(
-    "historyCompleted"
-  ).textContent =
-    completed;
-
-
-  document.getElementById(
-    "historyTime"
-  ).textContent =
-    formatMinutes(minutes);
-
-}
-
-
-/* ================================
-   INSIGHTS
-================================ */
-
-function renderInsights(){
-
-  const completed =
-    tasks.filter(
-      task => task.completed
-    );
-
-
-  const rate =
-    tasks.length
-    ? Math.round(
-        completed.length /
-        tasks.length *
-        100
-      )
-    : 0;
-
-
-  const average =
-    tasks.length
-    ? Math.round(
-        tasks.reduce(
-          (sum,t) =>
-            sum+t.duration,
-          0
-        ) /
-        tasks.length
-      )
-    : 0;
-
-
-  document.getElementById(
-    "completionRate"
-  ).textContent =
-    rate+"%";
-
-
-  document.getElementById(
-    "averageTask"
-  ).textContent =
-    average+"m";
-
-
-  document.getElementById(
-    "bestEnergy"
-  ).textContent =
-    completed.length
-    ? energy+"/10"
-    : "—";
-
-
-  document.getElementById(
-    "prediction"
-  ).textContent =
-    goals.length
-    ? `You currently have ${goals.length} active goal${
-        goals.length===1 ? "" : "s"
-      }. As you build more history, this dashboard can begin estimating how long your tasks actually take and which energy levels produce your strongest completion rates.`
-    : "Create a goal and start completing actions. Your personal patterns will become clearer with time.";
-
-}
-
-
-/* ================================
-   PROJECTS
-================================ */
-
-function renderProjects(){
-
-  const container =
-    document.getElementById(
-      "projectList"
-    );
-
-
-  if(!projects.length){
-
-    container.innerHTML =
-      `<div class="empty">
-        No projects yet.
-      </div>`;
-
-    return;
-
-  }
-
-
-  container.innerHTML =
-    projects.map(project => {
-
-      const goal =
-        goals.find(
-          g => g.id === project.goalId
-        );
-
-
-      const projectTasks =
-        tasks.filter(
-          task =>
-            task.projectId === project.id
-        );
-
-
-      return `
-
-        <div class="card goal">
-
-          <h3>
-            📁 ${escapeHTML(project.name)}
-          </h3>
-
-          <div class="goal-description">
-
-            ${
-              goal
-              ? `Part of <strong>
-                  ${escapeHTML(goal.name)}
-                 </strong>`
-              : "No goal assigned"
-            }
-
-          </div>
-
-          <span class="badge">
-            ${projectTasks.length} actions
-          </span>
-
+        <div class="form-group">
+          <label for="goalName">GOAL</label>
+          <input id="goalName" name="goalName" type="text" placeholder="Become debt free" />
         </div>
 
-      `;
-
-    }).join("");
-
-}
-
-
-/* ================================
-   TOGGLE TASK
-================================ */
-
-function toggleTask(id){
-
-  const task =
-    tasks.find(
-      task => task.id === id
-    );
-
-
-  if(!task) return;
-
-
-  task.completed =
-    !task.completed;
-
-
-  if(task.completed){
-
-    const key =
-      todayKey();
-
-    history[key] =
-      (history[key] || 0) + 1;
-
-
-    const goal =
-      goals.find(
-        g => g.id === task.goalId
-      );
-
-
-    if(goal){
-
-      goal.progress =
-        Math.min(
-          100,
-          (goal.progress || 0)+5
-        );
-
-    }
-
-  }
-
-
-  save();
-
-  render();
-
-}
-
-
-/* ================================
-   TIMER
-================================ */
-
-function startTimer(id){
-
-  const task =
-    tasks.find(
-      task => task.id === id
-    );
-
-
-  if(!task) return;
-
-
-  const start =
-    Date.now();
-
-
-  alert(
-    "Timer started for:\n\n" +
-    task.name +
-    "\n\nThe next version will keep the timer visible while you work."
-  );
-
-
-  setTimeout(
-    () => {
-
-      const minutes =
-        Math.round(
-          (Date.now()-start) /
-          60000
-        );
-
-
-      task.elapsed += minutes;
-
-      save();
-
-    },
-    60000
-  );
-
-}
-
-
-/* ================================
-   FORMAT
-================================ */
-
-function formatMinutes(minutes){
-
-  if(minutes < 60)
-    return minutes+"m";
-
-
-  return (
-    Math.floor(minutes/60)
-    +"h "
-    +(minutes%60)
-    +"m"
-  );
-
-}
-
-
-/* ================================
-   NAVIGATION
-================================ */
-
-function showPage(page,button){
-
-  document
-    .querySelectorAll(".page")
-    .forEach(
-      p => p.classList.remove("active")
-    );
-
-
-  document
-    .querySelectorAll(".nav")
-    .forEach(
-      b => b.classList.remove("active")
-    );
-
-
-  document
-    .getElementById(page)
-    .classList.add("active");
-
-
-  button.classList.add("active");
-
-
-  render();
-
-}
-
-
-/* ================================
-   MODALS
-================================ */
-
-function closeModals(){
-
-  document
-    .querySelectorAll(".modal")
-    .forEach(
-      modal =>
-        modal.classList.remove("open")
-    );
-
-}
-
-
-function openGoal(){
-
-  document
-    .getElementById("goalModal")
-    .classList.add("open");
-
-  document
-    .getElementById("goalName")
-    .focus();
-
-}
-
-
-function openProject(){
-
-  if(!goals.length){
-
-    alert(
-      "Create a goal first."
-    );
-
-    return;
-
-  }
-
-
-  const select =
-    document.getElementById(
-      "projectGoal"
-    );
-
-
-  select.innerHTML =
-    goals.map(
-      goal =>
-        `<option value="${goal.id}">
-          ${areaName(goal.area)}
-          — ${escapeHTML(goal.name)}
-         </option>`
-    ).join("");
-
-
-  document
-    .getElementById("projectModal")
-    .classList.add("open");
-
-}
-
-
-function openTask(){
-
-  if(!goals.length){
-
-    alert(
-      "Create a goal first. Your actions should lead somewhere."
-    );
-
-    return;
-
-  }
-
-
-  const select =
-    document.getElementById(
-      "taskGoal"
-    );
-
-
-  select.innerHTML =
-    goals.map(
-      goal =>
-        `<option value="${goal.id}">
-          ${areaName(goal.area)}
-          — ${escapeHTML(goal.name)}
-         </option>`
-    ).join("");
-
-
-  document
-    .getElementById("taskModal")
-    .classList.add("open");
-
-}
-
-
-/* ================================
-   ADD GOAL
-================================ */
-
-function addGoal(){
-
-  const name =
-    document
-      .getElementById("goalName")
-      .value
-      .trim();
-
-
-  const area =
-    document
-      .getElementById("goalArea")
-      .value;
-
-
-  const description =
-    document
-      .getElementById("goalDescription")
-      .value
-      .trim();
-
-
-  if(!name){
-
-    alert(
-      "Give your goal a name."
-    );
-
-    return;
-
-  }
-
-
-  goals.push({
-
-    id:Date.now(),
-
-    name,
-
-    area,
-
-    description,
-
-    progress:0
-
-  });
-
-
-  document
-    .getElementById("goalName")
-    .value="";
-
-
-  document
-    .getElementById("goalDescription")
-    .value="";
-
-
-  closeModals();
-
-  save();
-
-  render();
-
-}
-
-
-/* ================================
-   ADD PROJECT
-================================ */
-
-function addProject(){
-
-  const name =
-    document
-      .getElementById("projectName")
-      .value
-      .trim();
-
-
-  const goalId =
-    Number(
-      document
-        .getElementById("projectGoal")
-        .value
-    );
-
-
-  if(!name){
-
-    alert(
-      "Give your project a name."
-    );
-
-    return;
-
-  }
-
-
-  projects.push({
-
-    id:Date.now(),
-
-    name,
-
-    goalId
-
-  });
-
-
-  document
-    .getElementById("projectName")
-    .value="";
-
-
-  closeModals();
-
-  save();
-
-  render();
-
-}
-
-
-/* ================================
-   ADD TASK
-================================ */
-
-function addTask(){
-
-  const name =
-    document
-      .getElementById("taskName")
-      .value
-      .trim();
-
-
-  const goalId =
-    Number(
-      document
-        .getElementById("taskGoal")
-        .value
-    );
-
-
-  const duration =
-    Number(
-      document
-        .getElementById("taskDuration")
-        .value
-    );
-
-
-  const difficulty =
-    Number(
-      document
-        .getElementById("taskDifficulty")
-        .value
-    );
-const priority =
-  document.getElementById("taskPriority").value;
-
-const dueDate =
-  document.getElementById("taskDueDate").value;
-
-  if(!name){
-
-    alert(
-      "Give your action a name."
-    );
-
-    return;
-
-  }
-
-
-  tasks.push({
-
-    id:name,
-goalId,
-duration,
-difficulty,
-priority,
-dueDate,
-completed:false,
-
-    date:todayKey(),
-
-    elapsed:0
-
-  });
-
-
-  document
-    .getElementById("taskName")
-    .value="";
-
-
-  closeModals();
-
-  save();
-
-  render();
-
-}
-
-
-/* ================================
-   DATA BACKUP SYSTEM
-================================ */
-
-function downloadBackup() {
-
-  const backup = {
-    app: "LifeDashboard",
-    version: 1,
-    exportedAt: new Date().toISOString(),
-
-    data: {
-      goals: goals,
-      projects: projects,
-      tasks: tasks,
-      history: history,
-      energy: energy
-    }
-  };
-
-  const file = new Blob(
-    [JSON.stringify(backup, null, 2)],
-    { type: "application/json" }
-  );
-
-  const url = URL.createObjectURL(file);
-
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = "life-dashboard-backup-" +
-    todayKey() + ".json";
-
-  link.click();
-
-  URL.revokeObjectURL(url);
-
-  alert("Your backup has been downloaded! 💜");
-
-}
-
-
-function importBackup(event) {
-
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
-
-    try {
-
-      const backup = JSON.parse(e.target.result);
-
-      if (
-        backup.app !== "LifeDashboard" ||
-        backup.version !== 1 ||
-        !backup.data
-      ) {
-        throw new Error("Invalid backup file.");
-      }
-
-      const data = backup.data;
-
-      const validAreas = [
-        "finance",
-        "business",
-        "home",
-        "personal",
-        "travel"
-      ];
-
-      if (
-        !Array.isArray(data.goals) ||
-        !Array.isArray(data.projects) ||
-        !Array.isArray(data.tasks) ||
-        !data.history ||
-        typeof data.history !== "object" ||
-        Array.isArray(data.history) ||
-        !Number.isInteger(data.energy) ||
-        data.energy < 1 ||
-        data.energy > 10
-      ) {
-        throw new Error("Backup data is incomplete.");
-      }
-
-      const validGoals = data.goals.every(g =>
-        g &&
-        Number.isFinite(g.id) &&
-        typeof g.name === "string" &&
-        validAreas.includes(g.area)
-      );
-
-      const validProjects = data.projects.every(p =>
-        p &&
-        Number.isFinite(p.id) &&
-        typeof p.name === "string" &&
-        Number.isFinite(p.goalId)
-      );
-
-      const validTasks = data.tasks.every(t =>
-        t &&
-        Number.isFinite(t.id) &&
-        typeof t.name === "string" &&
-        Number.isFinite(t.goalId) &&
-        Number.isFinite(t.duration) &&
-        typeof t.completed === "boolean"
-      );
-
-      if (!validGoals || !validProjects || !validTasks) {
-        throw new Error("Backup contains invalid records.");
-      }
-
-      if (
-        !Object.values(data.history).every(v =>
-          Number.isFinite(v) && v >= 0
-        )
-      ) {
-        throw new Error("Invalid history data.");
-      }
-
-      const confirmed = confirm(
-        "Restoring this backup will replace your current dashboard data. Continue?"
-      );
-
-      if (!confirmed) return;
-
-      goals = data.goals;
-      projects = data.projects;
-      tasks = data.tasks;
-      history = data.history;
-      energy = data.energy;
-
-      save();
-      render();
-
-      alert("Your dashboard has been restored! 💗");
-
-    }
-
-    catch(error) {
-
-      alert(
-        "Could not restore backup: " + error.message
-      );
-
-    }
-
-    finally {
-
-      event.target.value = "";
-
-    }
-
-  };
-
-  reader.onerror = function() {
-    alert("Unable to read this backup file.");
-    event.target.value = "";
-  };
-
-  reader.readAsText(file);
-
-}
-
-/* ================================
-   EDIT AND DELETE TASKS
-================================ */
-
-function editTask(id) {
-
-  const task = tasks.find(t => t.id === id);
-
-  if (!task) return;
-
-  const newName = prompt("Task name:", task.name);
-  if (newName === null) return;
-
-  if (!newName.trim()) {
-    alert("Task name cannot be empty.");
-    return;
-  }
-
-  const newDuration = prompt(
-    "Duration in minutes:",
-    task.duration
-  );
-
-  if (newDuration === null) return;
-
-  const duration = Number(newDuration);
-
-  if (!Number.isInteger(duration) || duration < 1 || duration > 1440) {
-    alert("Enter a duration between 1 and 1440 minutes.");
-    return;
-  }
-
-  const newPriority = prompt(
-    "Priority: low, medium or high",
-    task.priority || "medium"
-  );
-
-  if (newPriority === null) return;
-
-  const priority = newPriority.trim().toLowerCase();
-
-  if (!["low", "medium", "high"].includes(priority)) {
-    alert("Priority must be low, medium or high.");
-    return;
-  }
-
-  const newDueDate = prompt(
-    "Due date (YYYY-MM-DD), or leave blank:",
-    task.dueDate || ""
-  );
-
-  if (newDueDate === null) return;
-
-  if (
-    newDueDate &&
-    !/^\d{4}-\d{2}-\d{2}$/.test(newDueDate)
-  ) {
-    alert("Please use YYYY-MM-DD format.");
-    return;
-  }
-
-  task.name = newName.trim();
-  task.duration = duration;
-  task.priority = priority;
-  task.dueDate = newDueDate.trim();
-
-  save();
-  render();
-
-}
-
-
-  const task = tasks.find(t => t.id === id);
-
-  if (!task) return;
-
-  const newName = prompt("Edit task name:", task.name);
-
-  if (newName === null) return;
-
-  if (!newName.trim()) {
-    alert("Task name cannot be empty.");
-    return;
-  }
-
-  const newDuration = prompt(
-    "Estimated duration in minutes:",
-    task.duration
-  );
-
-  if (newDuration === null) return;
-
-  const duration = Number(newDuration);
-
-  if (!Number.isInteger(duration) || duration < 1 || duration > 1440) {
-    alert("Enter a duration between 1 and 1440 minutes.");
-    return;
-  }
-
-  task.name = newName.trim();
-  task.duration = duration;
-
-  save();
-  render();
-
-}
-
-function deleteTask(id) {
-
-  const task = tasks.find(t => t.id === id);
-
-  if (!task) return;
-
-  const confirmed = confirm(
-    `Delete "${task.name}"? This cannot be undone.`
-  );
-
-  if (!confirmed) return;
-
-  tasks = tasks.filter(t => t.id !== id);
-
-  save();
-  render();
-
-}
-
-/* ================================
-   RENDER
-================================ */
-
-function render(){
-
-  renderEnergy();
-
-  renderGoals();
-
-  renderTasks();
-
-  renderStats();
-
-  renderRecommendation();
-
-  renderHistory();
-
-  renderInsights();
-
-  renderProjects();
-
-}
-
-
-/* ================================
-   START
-================================ */
-
-renderDate();
-
-updateClock();
-
-setInterval(updateClock, 1000);
-
-render();
-
-</script>
-
-</body>
+        <div class="form-group">
+          <label for="goalArea">LIFE AREA</label>
+          <select id="goalArea">
+            <option value="finance">💰 Finance</option>
+            <option value="business">💼 Business</option>
+            <option value="home">🏠 Home</option>
+            <option value="personal">🌱 Personal</option>
+            <option value="travel">✈️ Travel</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="goalDescription">WHY DOES THIS MATTER?</label>
+          <textarea id="goalDescription" placeholder="Describe what success looks like..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary" type="button" data-close-modal>Cancel</button>
+          <button class="primary" id="submitGoalBtn" type="button">Create goal</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="projectModal" class="modal" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+        <div class="modal-header">
+          <h2 id="projectModalTitle">Create a project</h2>
+          <p class="muted">A project is a collection of actions that moves a goal forward.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="projectName">PROJECT</label>
+          <input id="projectName" type="text" placeholder="Credit card payoff" />
+        </div>
+
+        <div class="form-group">
+          <label for="projectGoal">GOAL</label>
+          <select id="projectGoal"></select>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary" type="button" data-close-modal>Cancel</button>
+          <button class="primary" id="submitProjectBtn" type="button">Create project</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="taskModal" class="modal" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+        <div class="modal-header">
+          <h2 id="taskModalTitle">Add a daily action</h2>
+          <p class="muted">Keep it concrete. If it takes several steps, make it a project.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="taskName">ACTION</label>
+          <input id="taskName" type="text" placeholder="Review my credit card balance" />
+        </div>
+
+        <div class="form-group">
+          <label for="taskGoal">GOAL</label>
+          <select id="taskGoal"></select>
+        </div>
+
+        <div class="form-group">
+          <label for="taskTime">ESTIMATED TIME</label>
+          <input id="taskTime" type="number" min="5" max="240" step="5" value="20" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary" type="button" data-close-modal>Cancel</button>
+          <button class="primary" id="submitTaskBtn" type="button">Create action</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="scheduleModal" class="modal" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="scheduleModalTitle">
+        <div class="modal-header">
+          <h2 id="scheduleModalTitle">Add event</h2>
+          <p class="muted">Block time for what matters.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleTitle">TITLE</label>
+          <input id="scheduleTitle" type="text" placeholder="Deep work block" />
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleDate">DATE</label>
+          <input id="scheduleDate" type="date" />
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleTime">TIME</label>
+          <input id="scheduleTime" type="time" />
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleNotes">NOTES</label>
+          <textarea id="scheduleNotes" placeholder="Optional notes"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary" type="button" data-close-modal>Cancel</button>
+          <button class="primary" id="submitScheduleBtn" type="button">Save event</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
 </html>
-          
