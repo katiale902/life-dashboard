@@ -1,76 +1,60 @@
 # Life Dashboard
 
-Life Dashboard is a personal life management app designed to help you organize the most important areas of your life in one place.
+Life Dashboard is a lightweight personal productivity dashboard for organizing goals, projects, daily actions, energy, and progress in one place.
 
-It brings together your goals, projects, daily actions, energy, progress, and personal reflection so you can stay focused, intentional, and consistent.
+This project is designed to be simple, local-first, and easy to run without a backend or account. It helps you keep track of what matters most without having to manage a complicated app stack.
 
-## Purpose
-
-The goal of this project is to create a central place to manage:
-
-- personal goals
-- projects and tasks
-- daily actions
-- habits and routines
-- energy levels
-- personal growth
-- finances and planning
-- long-term life organization
-
-## Current Features
+## Features
 
 - Daily overview
 - Energy tracking
 - Goal management
-- Project management
-- Daily action tracking
-- Progress tracking
-- Activity history
+- Project tracking
+- Daily action planning
+- Progress and history tracking
 - Personal insights
+- Backup and restore via JSON export
 
-## Technology
+## Why it exists
+
+Many people spread important life information across notes, spreadsheets, task apps, and reminders. Life Dashboard brings the most important parts of a personal system into one organized place.
+
+## Tech stack
 
 - HTML
 - CSS
 - JavaScript
-- Browser localStorage for data persistence
+- Browser localStorage for persistence
 
-## Current Status
+## Current status
 
-This project is currently in private development.
+This project is being prepared for public use as a local-first personal dashboard.
 
-The aim is to build a fully functional personal dashboard before deciding whether to host it publicly or keep it as a local-first tool.
+The app stores data in the browser and can be exported as a JSON backup for safekeeping. It does not currently include user accounts, cloud sync, or a server backend.
 
-## Future Features
+## Run locally
 
-- Calendar integration
-- Habit tracking
-- Financial management
-- Notes and journaling
-- Data backup and restoration
-- User accounts and authentication
-- Mobile-friendly experience
+1. Clone the repository.
+2. Open `index.html` in a browser.
+3. Start using the dashboard immediately.
 
-## How It Works
+There is no build step required.
 
-1. Open the app in your browser.
-2. Add your goals, projects, and daily tasks.
-3. Track your energy and daily progress.
-4. Review your activity history and personal insights.
-5. Use the dashboard to stay organized and maintain momentum.
+## Data privacy
 
-## Why This Project Exists
+This project is intentionally local-first:
 
-Many people track important parts of their lives across different apps, notes, and spreadsheets. Life Dashboard is designed to simplify that by creating one organized space for personal planning and self-improvement.
-
-## Roadmap
-
-This project will continue to evolve toward a more complete personal productivity dashboard, with the possibility of future hosting, backup support, and expanded features.
+- Data is stored in the browser's local storage
+- No account system is required
+- No personal data is sent to a backend by default
+- You can export/import backups manually
 
 ## Contributing
 
-This project is currently private and not open for external contributions.
+Contributions, improvements, and bug reports are welcome.
+
+If you plan to make a larger change, please open an issue first so the direction of the project can be discussed.
 
 ## License
 
-TBD
+This project is licensed under the MIT License.
