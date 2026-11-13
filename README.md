@@ -1,71 +1,43 @@
-# Life Dashboard
+<div align="center">
+  <img src="assets/favicon.svg" alt="Life Dashboard mark" width="68" height="68" />
+  <h1>Life Dashboard</h1>
+  <p><strong>A calmer space for your goals, plans, and everyday progress.</strong></p>
+  <p>Local-first · Private by default · No build step</p>
+</div>
 
-A simple, local-first personal dashboard for tracking goals, projects, daily actions, energy, and progress in one place.
+<p align="center">
+  <img src="assets/dashboard-preview.svg" alt="Illustrated preview of the Life Dashboard interface" width="100%" />
+</p>
 
-Life Dashboard is designed to be lightweight, private, and easy to run without a backend, sign-in flow, or cloud account. It gives you a single place to stay organized without adding complexity.
+Life Dashboard is a lightweight personal productivity dashboard for organizing goals, projects, daily actions, energy, and progress in one place. It runs in your browser and does not require an account or backend.
 
-## Why this project exists
+## What you can do
 
-People often manage the important parts of life across notes, spreadsheets, reminders, and task apps. Life Dashboard brings the essentials into one focused workspace so that planning stays simple and intentional.
-
-## Features
-
-- Daily overview
-- Energy tracking
-- Goal planning
-- Project tracking
-- Daily action planning
-- Progress and history insights
-- Local backup and restore
-- Browser-based persistence with no server required
-
-## Tech stack
-
-- HTML
-- CSS
-- JavaScript
-- Browser localStorage
+- See a daily overview of goals, actions, and progress
+- Track your energy and focus
+- Organize goals by life area
+- Break goals into projects and daily actions
+- Plan events and review activity history
+- Export and restore a JSON backup
 
 ## Run locally
 
-1. Clone the repository.
-2. Open `index.html` in a browser.
-3. Start using the dashboard immediately.
+1. Clone this repository.
+2. Open `index.html` in a modern browser.
+3. Your dashboard is ready—no build step or dependencies required.
 
-No build step is required.
+## Privacy and data
 
-## Privacy and data ownership
+Life Dashboard stores app data in your browser's local storage. There is no account system or backend sync. Use the built-in export feature to save a backup, and keep that file somewhere safe. Anyone with access to your browser profile may be able to access locally stored data, so avoid entering information you would not want stored on that device.
 
-This app is intentionally local-first:
+## Screenshots and assets
 
-- Data is stored in the browser's localStorage
-- No account system is required
-- No backend database is required
-- Backups can be exported and restored manually
-
-This means your information stays in your browser unless you intentionally export a backup file.
-
-## Project status
-
-Life Dashboard is currently in active development as a personal productivity tool with a focus on simplicity, trackability, and privacy.
-
-## Roadmap
-
-Planned ideas include:
-
-- improved calendar planning
-- recurring tasks and reminders
-- richer analytics and personal insights
-- enhanced export/import workflows
-- mobile-friendly refinements
-- optional sync or cloud features in future versions
+The preview above is an illustrative, editable SVG mockup rather than a captured screenshot of a running browser. App branding assets are in [`assets/`](assets/).
 
 ## Contributing
 
-Contributions, feedback, and suggestions are welcome.
-
-If you plan a larger change, please open an issue first so the direction of the project can be discussed.
+Bug reports, ideas, and pull requests are welcome. For larger changes, please open an issue first to discuss the proposal.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT. See [`LICENSE`](LICENSE).
