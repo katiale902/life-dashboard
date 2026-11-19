@@ -481,6 +481,9 @@
 
     .modal.open { display: flex; }
 
+    .recovery-mode .sidebar,
+    .recovery-mode #today > :not(#dataBackupSection) { display: none; }
+
     .modal-box {
       width: min(540px, 100%);
       background: white;
@@ -574,7 +577,7 @@
 
     <main class="main">
       <div id="today" class="page active">
-        <div class="section card" style="padding: 20px 22px; margin-bottom: 24px;">
+        <div class="section card" id="dataBackupSection" style="padding: 20px 22px; margin-bottom: 24px;">
           <div class="section-head">
             <div>
               <h2>Data & backups</h2>
@@ -583,6 +586,7 @@
             <span>☁️</span>
           </div>
           <p class="muted" style="margin-bottom: 14px;">Export a backup of your goals, projects, tasks, and history.</p>
+          <p id="recoveryMessage" role="alert" hidden></p>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
             <button class="primary" id="exportBtn">↓ Export backup</button>
             <button class="secondary" id="importBtn">↑ Restore backup</button>
@@ -868,6 +872,7 @@
     </div>
   </div>
 
+  <script src="assets/dashboard-data.js"></script>
   <script>
     const STORAGE_KEY = 'life-dashboard-v1';
 
@@ -894,19 +899,32 @@
       history: []
     };
 
+    let damagedData = null;
     let state = loadState();
 
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : defaultState;
+        if (raw === null) return defaultState;
+        const parsed = JSON.parse(raw);
+        if (isDashboardState(parsed)) return parsed;
+        damagedData = raw;
       } catch {
-        return defaultState;
+        try {
+          damagedData = localStorage.getItem(STORAGE_KEY);
+        } catch {
+          damagedData = null;
+        }
       }
+      return null;
     }
 
     function persist() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch {
+        alert('Your changes could not be saved in this browser. Export a backup before leaving this page.');
+      }
     }
 
     function getGreeting() {
@@ -914,14 +932,6 @@
       if (hours < 12) return 'Good morning';
       if (hours < 18) return 'Good afternoon';
       return 'Good evening';
-    }
-
-    function populateInitialGoals() {
-      if (!state.goals || !state.goals.length) state.goals = defaultState.goals;
-      if (!state.projects || !state.projects.length) state.projects = defaultState.projects;
-      if (!state.tasks || !state.tasks.length) state.tasks = defaultState.tasks;
-      if (!state.events || !state.events.length) state.events = defaultState.events;
-      persist();
     }
 
     function getGoalById(id) {
@@ -1036,13 +1046,13 @@
         wrapper.className = 'goal-card';
         wrapper.innerHTML = `
           <div class="goal-top">
-            <h3>${goal.name}</h3>
-            <span class="badge">${goal.area}</span>
+            <h3>${escapeHtml(goal.name)}</h3>
+            <span class="badge">${escapeHtml(goal.area)}</span>
           </div>
-          <div class="goal-desc">${goal.description || 'No description yet.'}</div>
-          <div class="progress-bar"><span style="width:${goal.progress || 0}%"></span></div>
+          <div class="goal-desc">${escapeHtml(goal.description || 'No description yet.')}</div>
+          <div class="progress-bar"><span style="width:${Math.max(0, Math.min(100, goal.progress || 0))}%"></span></div>
           <div class="goal-foot">
-            <span>${goal.progress || 0}% complete</span>
+            <span>${escapeHtml(goal.progress || 0)}% complete</span>
             <span>${state.tasks.filter(t => t.goalId === goal.id).length} actions</span>
           </div>
         `;
@@ -1066,12 +1076,12 @@
         wrapper.className = 'project-card';
         wrapper.innerHTML = `
           <div class="project-top">
-            <h3>${project.name}</h3>
+            <h3>${escapeHtml(project.name)}</h3>
             <span class="badge">Project</span>
           </div>
-          <div class="project-desc">${project.description || 'No description yet.'}</div>
+          <div class="project-desc">${escapeHtml(project.description || 'No description yet.')}</div>
           <div class="project-foot">
-            <span>${goal ? goal.name : 'General project'}</span>
+            <span>${goal ? escapeHtml(goal.name) : 'General project'}</span>
             <span>${state.tasks.filter(t => t.goalId === project.goalId).length} actions</span>
           </div>
         `;
@@ -1095,15 +1105,15 @@
         const item = document.createElement('div');
         item.className = 'task-item';
         item.innerHTML = `
-          <button class="check ${task.done ? 'done' : ''}" data-task-id="${task.id}" aria-label="Toggle task"></button>
+          <button class="check ${task.done ? 'done' : ''}" data-task-id="${escapeHtml(task.id)}" aria-label="Toggle task"></button>
           <div>
-            <div class="task-name">${task.name}</div>
+            <div class="task-name">${escapeHtml(task.name)}</div>
             <div class="task-meta">
-              ${goal ? `<span class="tag">${goal.name}</span>` : ''}
-              <span>${task.time || 25} min</span>
+              ${goal ? `<span class="tag">${escapeHtml(goal.name)}</span>` : ''}
+              <span>${escapeHtml(task.time || 25)} min</span>
             </div>
           </div>
-          <div class="timer-pill">${task.time || 25}m</div>
+          <div class="timer-pill">${escapeHtml(task.time || 25)}m</div>
         `;
         container.appendChild(item);
       });
@@ -1152,10 +1162,10 @@
         row.innerHTML = `
           <div class="check done" aria-hidden="true"></div>
           <div>
-            <div class="task-name">${event.title}</div>
-            <div class="task-meta"><span>${event.time || 'All day'}</span></div>
+            <div class="task-name">${escapeHtml(event.title)}</div>
+            <div class="task-meta"><span>${escapeHtml(event.time || 'All day')}</span></div>
           </div>
-          <button class="secondary" data-delete-event="${event.id}" style="padding: 7px 10px; font-size: 0.7rem;">Delete</button>
+          <button class="secondary" data-delete-event="${escapeHtml(event.id)}" style="padding: 7px 10px; font-size: 0.7rem;">Delete</button>
         `;
         list.appendChild(row);
       });
@@ -1318,7 +1328,7 @@
     }
 
     function exportBackup() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const blob = new Blob([state === null ? damagedData : JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1334,15 +1344,28 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
+        let parsed;
         try {
-          const parsed = JSON.parse(reader.result);
-          state = parsed;
-          persist();
-          renderDashboard();
+          parsed = JSON.parse(reader.result);
+          if (!isDashboardState(parsed)) throw new Error('Invalid dashboard backup');
         } catch {
           alert('Invalid backup file. Please select a valid Life Dashboard JSON backup.');
+          return;
         }
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        } catch {
+          alert('The backup could not be saved in this browser. Your existing data was not replaced.');
+          return;
+        }
+        state = parsed;
+        damagedData = null;
+        document.body.classList.remove('recovery-mode');
+        document.getElementById('recoveryMessage').hidden = true;
+        document.getElementById('exportBtn').disabled = false;
+        renderDashboard();
       };
+      reader.onerror = () => alert('The backup could not be read. Your existing data was not replaced.');
       reader.readAsText(file);
       event.target.value = '';
     }
@@ -1381,8 +1404,15 @@
     document.getElementById('plannerDate').addEventListener('change', renderPlanner);
     document.getElementById('plannerDate').value = new Date().toISOString().slice(0, 10);
 
-    populateInitialGoals();
-    renderDashboard();
+    if (state === null) {
+      document.body.classList.add('recovery-mode');
+      const message = document.getElementById('recoveryMessage');
+      message.textContent = 'Your saved dashboard could not be read. It has not been overwritten. Export the existing data if available, or restore a valid backup.';
+      message.hidden = false;
+      document.getElementById('exportBtn').disabled = damagedData === null;
+    } else {
+      renderDashboard();
+    }
     setInterval(updateClock, 1000);
   </script>
 </body>

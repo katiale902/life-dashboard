@@ -37,7 +37,15 @@ This project is meant to be a simple local-first tool for personal use.
 - There is no backend or cloud sync
 - Backups can be exported manually as JSON
 
-This is intended to keep the app easy to run and easy to keep private.
+Data and exported backups are not encrypted. Anyone with access to the browser profile or a backup file can read them. Clearing browser data or changing browsers or devices can remove access to the dashboard, so export backups regularly and store them securely.
+
+Restore accepts JSON backups exported by this version of Life Dashboard and replaces the current dashboard only after validating the backup and saving it successfully. If saved data cannot be read, the dashboard enters recovery mode without overwriting it; export the existing data or restore a valid backup.
+
+The app does not have accounts or access controls. Publishing the site makes the app itself available to visitors, though each visitor's dashboard data stays in their own browser.
+
+## Checks
+
+With Node.js installed, run `node --test tests/*.test.js` to check backup validation and text escaping. No dependencies or build step are needed to use the app.
 
 ## Screenshots and assets
 
